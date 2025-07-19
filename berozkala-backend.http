@@ -1,0 +1,6 @@
+@berozkala_backend_HostAddress = http://localhost:5145
+
+GET {{berozkala_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
