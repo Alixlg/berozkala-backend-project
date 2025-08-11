@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using berozkala_backend.Entities.Product;
+using berozkala_backend.Entities.ProductEntities;
+using berozkala_backend.Enums;
 
 namespace berozkala_backend.DTOs
 {
@@ -13,10 +14,10 @@ namespace berozkala_backend.DTOs
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }
         public required string Title { get; set; }
-        public required string Category { get; set; }
+        public required List<string> Category { get; set; }
         public required double Price { get; set; }
         public required int MaxCount { get; set; }
-        public int ScoreRank { get; set; }
+        public Score ScoreRank { get; set; }
         public double DiscountPercent { get; set; }
         public string? PreviewImageUrl { get; set; }
         public string[]? ImagesUrl { get; set; }

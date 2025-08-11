@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace berozkala_backend.Entities.Base
 {
-    public class DbBase
+    public class DbBaseProps
     {
         public int Id { get; set; }
     }

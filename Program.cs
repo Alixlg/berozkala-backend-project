@@ -1,8 +1,6 @@
+using berozkala_backend.APIs.EndPoints;
 using berozkala_backend.DbContextes;
-using berozkala_backend.DTOs;
-using berozkala_backend.DTOs.Common;
-using berozkala_backend.Entities.Product;
-using Microsoft.AspNetCore.Mvc;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,150 +20,71 @@ app.UseCors(policy =>
 if (app.Environment.IsDevelopment())
 {
   app.MapOpenApi();
+  app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
 
-app.MapPost("api/v1/products/create", ([FromBody] ProductDTO p, [FromServices] BerozkalaDb db) =>
-{
-  db.Products.Add(new Product()
-  {
-    IsInvisible = false,
-    IsAvailable = p.IsAvailable,
-    Brand = p.Brand,
-    Title = p.Title,
-    Price = p.Price,
-    MaxCount = p.MaxCount,
-    ScoreRank = p.ScoreRank,
-    DiscountPercent = p.DiscountPercent,
-    PreviewImageUrl = p.PreviewImageUrl,
-    ImagesUrl = p.ImagesUrl,
-    Category = p.Category,
-    Description = p.Description,
-    Review = p.Review
-  });
-  db.SaveChanges();
-
-  return new RequestResultDTO()
-  {
-    IsSuccess = true,
-    Message = "محصول با موفقیت اظافه شد !"
-  };
-});
-
-app.MapGet("api/v1/products/list", ([FromServices] BerozkalaDb db) =>
-{
-  var products = db.Products
-  .Where(p => !p.IsInvisible)
-  .Select(p => new ProductDTO()
-  {
-    Id = p.GuId,
-    DateToAdd = p.DateToAdd,
-    IsAvailable = p.IsAvailable,
-    Brand = p.Brand,
-    Title = p.Title,
-    Price = p.Price,
-    MaxCount = p.MaxCount,
-    ScoreRank = p.ScoreRank,
-    DiscountPercent = p.DiscountPercent,
-    PreviewImageUrl = p.PreviewImageUrl,
-    ImagesUrl = p.ImagesUrl,
-    Category = p.Category,
-    Description = p.Description,
-    Review = p.Review
-  }).ToList();
+app.MapProductList();
+app.MapProductCreate();
+app.MapProductGet();
 
 
-  return products;
-});
+// app.MapPut("api/v1/products/delete{id}", ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
+// {
+//   var p = db.Products.FirstOrDefault(p => p.GuId == id);
 
-app.MapGet("api/v1/products/getproduct{id}", ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
-{
-  var p = db.Products.FirstOrDefault(p => p.GuId == id);
+//   if (p == null || p.IsInvisible)
+//   {
+//     return new RequestResultDTO()
+//     {
+//       IsSuccess = false,
+//       Message = "محصول مورد نظر یافت نشد !"
+//     };
+//   }
 
-  // if (p == null || p.IsInvisible)
-  // {
-  //   return new RequestResultDTO()
-  //   {
-  //     IsSuccess = false,
-  //     Message = "محصول مورد نظر یافت نشد !"
-  //   };
-  // }
+//   p.IsInvisible = true;
+//   db.SaveChanges();
 
-  return new ProductDTO()
-  {
-    Id = p.GuId,
-    DateToAdd = p.DateToAdd,
-    IsAvailable = p.IsAvailable,
-    Brand = p.Brand,
-    Title = p.Title,
-    Price = p.Price,
-    MaxCount = p.MaxCount,
-    ScoreRank = p.ScoreRank,
-    DiscountPercent = p.DiscountPercent,
-    PreviewImageUrl = p.PreviewImageUrl,
-    ImagesUrl = p.ImagesUrl,
-    Category = p.Category,
-    Description = p.Description,
-    Review = p.Review
-  };
-});
+//   return new RequestResultDTO()
+//   {
+//     IsSuccess = true,
+//     Message = "محصول مورد نظر با موفقیت حذف شد !"
+//   };
+// });
 
-app.MapPut("api/v1/products/delete{id}", ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
-{
-  var p = db.Products.FirstOrDefault(p => p.GuId == id);
+// app.MapPut("api/v1/products/edit{id}", ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db) =>
+// {
+//   var p = db.Products.FirstOrDefault(p => p.GuId == id);
 
-  if (p == null || p.IsInvisible)
-  {
-    return new RequestResultDTO()
-    {
-      IsSuccess = false,
-      Message = "محصول مورد نظر یافت نشد !"
-    };
-  }
+//   if (p == null)
+//   {
+//     return new RequestResultDTO()
+//     {
+//       IsSuccess = false,
+//       Message = "محصول مورد نظر یافت نشد !"
+//     };
+//   }
 
-  p.IsInvisible = true;
-  db.SaveChanges();
+//   p.IsAvailable = newProduct.IsAvailable;
+//   p.Brand = newProduct.Brand;
+//   p.Title = newProduct.Title;
+//   p.Price = newProduct.Price;
+//   p.MaxCount = newProduct.MaxCount;
+//   p.ScoreRank = newProduct.ScoreRank;
+//   p.DiscountPercent = newProduct.DiscountPercent;
+//   p.PreviewImageUrl = newProduct.PreviewImageUrl;
+//   p.ImagesUrl = newProduct.ImagesUrl;
+//   p.Category = newProduct.Category;
+//   p.Description = newProduct.Description;
+//   p.Review = newProduct.Review;
+//   db.SaveChanges();
 
-  return new RequestResultDTO()
-  {
-    IsSuccess = true,
-    Message = "محصول مورد نظر با موفقیت حذف شد !"
-  };
-});
-
-app.MapPut("api/v1/products/edit{id}", ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db) =>
-{
-  var p = db.Products.FirstOrDefault(p => p.GuId == id);
-
-  if (p == null)
-  {
-    return new RequestResultDTO()
-    {
-      IsSuccess = false,
-      Message = "محصول مورد نظر یافت نشد !"
-    };
-  }
-
-  p.IsAvailable = newProduct.IsAvailable;
-  p.Brand = newProduct.Brand;
-  p.Title = newProduct.Title;
-  p.Price = newProduct.Price;
-  p.MaxCount = newProduct.MaxCount;
-  p.ScoreRank = newProduct.ScoreRank;
-  p.DiscountPercent = newProduct.DiscountPercent;
-  p.PreviewImageUrl = newProduct.PreviewImageUrl;
-  p.ImagesUrl = newProduct.ImagesUrl;
-  p.Category = newProduct.Category;
-  p.Description = newProduct.Description;
-  p.Review = newProduct.Review;
-  db.SaveChanges();
-
-  return new RequestResultDTO()
-  {
-    IsSuccess = true,
-    Message = "محصول با موفقیت ویرایش شد !"
-  };
-});
+//   return new RequestResultDTO()
+//   {
+//     IsSuccess = true,
+//     Message = "محصول با موفقیت ویرایش شد !"
+//   };
+// });
 
 app.Run();

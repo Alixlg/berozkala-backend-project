@@ -5,25 +5,18 @@
 namespace berozkala_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCategory : Migration
+    public partial class M225_08_11 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Category",
-                table: "Products",
-                type: "TEXT",
-                nullable: false,
-                defaultValue: "");
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Category",
-                table: "Products");
+
         }
     }
 }

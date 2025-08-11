@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using berozkala_backend.DbContextes;
 
@@ -10,9 +11,11 @@ using berozkala_backend.DbContextes;
 namespace berozkala_backend.Migrations
 {
     [DbContext(typeof(BerozkalaDb))]
-    partial class BerozkalaDbModelSnapshot : ModelSnapshot
+    [Migration("20250811002217_M125_08_11")]
+    partial class M125_08_11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -201,7 +204,7 @@ namespace berozkala_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.PrimitiveCollection<string>("Category")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
