@@ -118,5 +118,71 @@ namespace berozkala_backend.APIs.EndPoints
                 }
             });
         }
+        public static void MapProductDelete(this WebApplication app)
+        {
+            app.MapPut("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
+            {
+                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+
+                if (p == null || p.IsInvisible)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        Message = "محصول مورد نظر یافت نشد !"
+                    };
+                }
+                else
+                {
+                    p.IsInvisible = true;
+                }
+
+                await db.SaveChangesAsync();
+
+                return new RequestResultDTO<string>()
+                {
+                    IsSuccess = true,
+                    Message = "محصول مورد نظر با موفقیت حذف شد !"
+                };
+            });
+        }
+        public static void MapProductEdit(this WebApplication app)
+        {
+            app.MapPut("api/v1/products/edit/{id}", async ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db) =>
+            {
+                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+
+                if (p == null)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        Message = "محصول مورد نظر یافت نشد !"
+                    };
+                }
+
+                p.IsAvailable = newProduct.IsAvailable;
+                p.Brand = newProduct.Brand;
+                p.Title = newProduct.Title;
+                p.Category = newProduct.Category;
+                p.Price = newProduct.Price;
+                p.MaxCount = newProduct.MaxCount;
+                p.ScoreRank = newProduct.ScoreRank;
+                p.DiscountPercent = newProduct.DiscountPercent;
+                p.PreviewImageUrl = newProduct.PreviewImageUrl;
+                p.ImagesUrl = newProduct.ImagesUrl;
+                p.Description = newProduct.Description;
+                p.Review = newProduct.Review;
+                p.Garrantys = newProduct.Garrantys;
+                p.Attributes = newProduct.Attributes;
+                await db.SaveChangesAsync();
+
+                return new RequestResultDTO<string>()
+                {
+                    IsSuccess = true,
+                    Message = "محصول با موفقیت ویرایش شد !"
+                };
+            });
+        }
     }
 }

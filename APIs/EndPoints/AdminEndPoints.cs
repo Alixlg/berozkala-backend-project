@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace berozkala_backend.APIs.EndPoints
 {
-    public static class MemberEndPoints
+    public static class AdminEndPoints
     {
         
     }
