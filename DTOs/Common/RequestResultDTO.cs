@@ -10,5 +10,9 @@ namespace berozkala_backend.DTOs.Common
         public required bool IsSuccess { get; set; }
         public string? Message { get; set; }
         public T? Body { get; set; }
+        public RequestResultDTO()
+        {
+            Thread.Sleep(700);
+        }
     }
 }

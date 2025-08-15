@@ -120,7 +120,7 @@ namespace berozkala_backend.APIs.EndPoints
         }
         public static void MapProductDelete(this WebApplication app)
         {
-            app.MapPut("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
+            app.MapDelete("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
             {
                 var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
@@ -135,6 +135,7 @@ namespace berozkala_backend.APIs.EndPoints
                 else
                 {
                     p.IsInvisible = true;
+                    db.Products.Remove(p);
                 }
 
                 await db.SaveChangesAsync();
