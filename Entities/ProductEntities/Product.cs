@@ -11,7 +11,6 @@ namespace berozkala_backend.Entities.ProductEntities
     {
         public string GuId { get; set; } = Guid.NewGuid().ToString();
         public string DateToAdd { get; set; } = DateTime.Now.ToString();
-        public required bool IsInvisible { get; set; }
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }
         public required string Title { get; set; }

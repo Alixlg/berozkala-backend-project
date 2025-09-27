@@ -15,11 +15,10 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapProductCreate(this WebApplication app)
         {
-            app.MapPost("api/v1/products/create", async ([FromBody] ProductDTO p, [FromServices] BerozkalaDb db) =>
+            app.MapPost("api/v1/products/create", async ([FromBody] ProductDTO p, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 await db.Products.AddAsync(new Product()
                 {
-                    IsInvisible = false,
                     IsAvailable = p.IsAvailable,
                     Brand = p.Brand,
                     Title = p.Title,
@@ -39,16 +38,16 @@ namespace berozkala_backend.APIs.EndPoints
                 return new RequestResultDTO<string>()
                 {
                     IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
                     Message = "محصول با موفقیت اظافه شد !"
                 };
-            });
+            }).RequireAuthorization();
         }
         public static void MapProductList(this WebApplication app)
         {
-            app.MapGet("api/v1/products/list", async ([FromServices] BerozkalaDb db) =>
+            app.MapGet("api/v1/products/list", async ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var products = await db.Products
-                    .Where(p => !p.IsInvisible)
                     .Select(p => new ProductDTO()
                     {
                         Id = p.GuId,
@@ -70,22 +69,24 @@ namespace berozkala_backend.APIs.EndPoints
                 return new RequestResultDTO<List<ProductDTO>>()
                 {
                     IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
                     Message = "لیست محصولات با موفقبت یافت شد",
                     Body = products
                 };
-            });
+            }).RequireAuthorization();
         }
         public static void MapProductGet(this WebApplication app)
         {
-            app.MapGet("api/v1/products/getproduct/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
+            app.MapGet("api/v1/products/getproduct/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var product = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
-                if (product == null || product.IsInvisible)
+                if (product == null)
                 {
                     return new RequestResultDTO<ProductDTO>()
                     {
                         IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت نشد !"
                     };
                 }
@@ -112,44 +113,16 @@ namespace berozkala_backend.APIs.EndPoints
                     return new RequestResultDTO<ProductDTO>()
                     {
                         IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت شد",
                         Body = productDto
                     };
                 }
-            });
+            }).RequireAuthorization();
         }
         public static void MapProductDelete(this WebApplication app)
         {
-            app.MapDelete("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
-            {
-                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
-
-                if (p == null || p.IsInvisible)
-                {
-                    return new RequestResultDTO<string>()
-                    {
-                        IsSuccess = false,
-                        Message = "محصول مورد نظر یافت نشد !"
-                    };
-                }
-                else
-                {
-                    p.IsInvisible = true;
-                    db.Products.Remove(p);
-                }
-
-                await db.SaveChangesAsync();
-
-                return new RequestResultDTO<string>()
-                {
-                    IsSuccess = true,
-                    Message = "محصول مورد نظر با موفقیت حذف شد !"
-                };
-            });
-        }
-        public static void MapProductEdit(this WebApplication app)
-        {
-            app.MapPut("api/v1/products/edit/{id}", async ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db) =>
+            app.MapDelete("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
@@ -158,6 +131,37 @@ namespace berozkala_backend.APIs.EndPoints
                     return new RequestResultDTO<string>()
                     {
                         IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "محصول مورد نظر یافت نشد !"
+                    };
+                }
+                else
+                {
+                    db.Products.Remove(p);
+                }
+
+                await db.SaveChangesAsync();
+
+                return new RequestResultDTO<string>()
+                {
+                    IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
+                    Message = "محصول مورد نظر با موفقیت حذف شد !"
+                };
+            });
+        }
+        public static void MapProductEdit(this WebApplication app)
+        {
+            app.MapPut("api/v1/products/edit/{id}", async ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db, HttpContext context) =>
+            {
+                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+
+                if (p == null)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت نشد !"
                     };
                 }
@@ -181,9 +185,10 @@ namespace berozkala_backend.APIs.EndPoints
                 return new RequestResultDTO<string>()
                 {
                     IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
                     Message = "محصول با موفقیت ویرایش شد !"
                 };
-            });
+            }).RequireAuthorization();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using berozkala_backend.DbContextes;
 
@@ -10,9 +11,11 @@ using berozkala_backend.DbContextes;
 namespace berozkala_backend.Migrations
 {
     [DbContext(typeof(BerozkalaDb))]
-    partial class BerozkalaDbModelSnapshot : ModelSnapshot
+    [Migration("20250926203535_EditphoneNumber")]
+    partial class EditphoneNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -58,12 +61,6 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NationalCode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("OptCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("OptLifeTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PassWord")
@@ -131,12 +128,6 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NationalCode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("OptCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("OptLifeTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PassWord")
@@ -249,6 +240,9 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsAvailable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsInvisible")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MaxCount")

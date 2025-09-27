@@ -14,15 +14,16 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapProductPreviewGet(this WebApplication app)
         {
-            app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db) =>
+            app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var product = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
-                if (product == null || product.IsInvisible)
+                if (product == null)
                 {
                     return new RequestResultDTO<ProductPreviewDTO>()
                     {
                         IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت نشد !"
                     };
                 }
@@ -45,18 +46,18 @@ namespace berozkala_backend.APIs.EndPoints
                     return new RequestResultDTO<ProductPreviewDTO>()
                     {
                         IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت شد",
                         Body = productPreviewDTO
                     };
                 }
-            });
+            }).RequireAuthorization();
         }
         public static void MapProductPreviewList(this WebApplication app)
         {
-            app.MapGet("api/v1/productsprevirw/list", async ([FromServices] BerozkalaDb db) =>
+            app.MapGet("api/v1/productsprevirw/list", async ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var products = await db.Products
-                    .Where(p => !p.IsInvisible)
                     .Select(p => new ProductPreviewDTO()
                     {
                         Id = p.GuId,
@@ -74,10 +75,11 @@ namespace berozkala_backend.APIs.EndPoints
                 return new RequestResultDTO<List<ProductPreviewDTO>>()
                 {
                     IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
                     Message = "لیست محصولات با موفقبت یافت شد",
                     Body = products
                 };
-            });
+            }).RequireAuthorization();
         }
     }
 }

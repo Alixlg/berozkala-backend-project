@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using berozkala_backend.DbContextes;
 
@@ -10,9 +11,11 @@ using berozkala_backend.DbContextes;
 namespace berozkala_backend.Migrations
 {
     [DbContext(typeof(BerozkalaDb))]
-    partial class BerozkalaDbModelSnapshot : ModelSnapshot
+    [Migration("20250926185507_AddFluentAPI")]
+    partial class AddFluentAPI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -35,7 +38,7 @@ namespace berozkala_backend.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateOnly?>("DateOfBirth")
+                    b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateOfSingup")
@@ -45,6 +48,7 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Gender")
@@ -53,26 +57,22 @@ namespace berozkala_backend.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastIp")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NationalCode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("OptCode")
+                    b.Property<ulong>("NationalCode")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("OptLifeTime")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("PassWord")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<ulong>("PhoneNumber")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
@@ -83,12 +83,6 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -108,7 +102,7 @@ namespace berozkala_backend.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateOnly?>("DateOfBirth")
+                    b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateOfSingup")
@@ -118,6 +112,7 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Gender")
@@ -126,26 +121,22 @@ namespace berozkala_backend.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastIp")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NationalCode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("OptCode")
+                    b.Property<ulong>("NationalCode")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("OptLifeTime")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("PassWord")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<ulong>("PhoneNumber")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
@@ -156,12 +147,6 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique();
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -249,6 +234,9 @@ namespace berozkala_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsAvailable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsInvisible")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MaxCount")
