@@ -68,7 +68,7 @@ namespace berozkala_backend.APIs.EndPoints
                     .ThenInclude(p => p.Subsets)
                     .Select(p => new ProductGetDTO()
                     {
-                        Id = p.GuId,
+                        Id = p.Guid,
                         DateToAdd = p.DateToAdd,
                         IsAvailable = p.IsAvailable,
                         Brand = p.Brand,
@@ -100,7 +100,7 @@ namespace berozkala_backend.APIs.EndPoints
             app.MapGet("api/v1/products/getproduct/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var product = await db.Products
-                    .Where(p => p.GuId == id)
+                    .Where(p => p.Guid == id)
                     .Include(p => p.Category)
                     .Include(p => p.ImagesUrls)
                     .Include(p => p.Garrantys)
@@ -108,7 +108,7 @@ namespace berozkala_backend.APIs.EndPoints
                     .ThenInclude(p => p.Subsets)
                     .Select(p => new ProductGetDTO()
                     {
-                        Id = p.GuId,
+                        Id = p.Guid,
                         DateToAdd = p.DateToAdd,
                         IsAvailable = p.IsAvailable,
                         Brand = p.Brand,
@@ -166,7 +166,7 @@ namespace berozkala_backend.APIs.EndPoints
                     };
                 }
 
-                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+                var p = await db.Products.FirstOrDefaultAsync(p => p.Guid == id);
 
                 if (p == null)
                 {
@@ -212,7 +212,7 @@ namespace berozkala_backend.APIs.EndPoints
                 }
 
                 var p = await db.Products
-                    .Where(p => p.GuId == id)
+                    .Where(p => p.Guid == id)
                     .Include(p => p.Category)
                     .Include(p => p.ImagesUrls)
                     .Include(p => p.Garrantys)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using berozkala_backend.DbContextes;
 
@@ -10,27 +11,14 @@ using berozkala_backend.DbContextes;
 namespace berozkala_backend.Migrations
 {
     [DbContext(typeof(BerozkalaDb))]
-    partial class BerozkalaDbModelSnapshot : ModelSnapshot
+    [Migration("20250929225723_AddGuid")]
+    partial class AddGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
-
-            modelBuilder.Entity("ProductProductSubCategory", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CategoryId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ProductProductSubCategory");
-                });
 
             modelBuilder.Entity("berozkala_backend.Entities.AccountsEntities.AdminAccount", b =>
                 {
@@ -692,7 +680,10 @@ namespace berozkala_backend.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductCategoryId")
+                    b.Property<int?>("ProductCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SubCategoryName")
@@ -703,22 +694,9 @@ namespace berozkala_backend.Migrations
 
                     b.HasIndex("ProductCategoryId");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("ProductSubCategory");
-                });
-
-            modelBuilder.Entity("ProductProductSubCategory", b =>
-                {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.ProductSubCategory", null)
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.OrderEntities.Order", b =>
@@ -884,13 +862,13 @@ namespace berozkala_backend.Migrations
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductSubCategory", b =>
                 {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.ProductCategory", "ProductCategory")
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.ProductCategory", null)
                         .WithMany("SubCategorys")
-                        .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductCategoryId");
 
-                    b.Navigation("ProductCategory");
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", null)
+                        .WithMany("Category")
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.AccountsEntities.AdminAccount", b =>
@@ -919,6 +897,8 @@ namespace berozkala_backend.Migrations
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.Product", b =>
                 {
                     b.Navigation("Attributes");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Garrantys");
                 });

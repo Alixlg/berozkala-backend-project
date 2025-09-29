@@ -32,13 +32,19 @@ namespace berozkala_backend.DbContextes
                 u.Property(e => e.UserName).HasMaxLength(128);
             });
 
-            modelBuilder.Entity<AdminAccount>(u =>
+            modelBuilder.Entity<AdminAccount>(a =>
             {
-                u.HasIndex(e => e.UserName).IsUnique();
-                u.HasIndex(e => e.PhoneNumber).IsUnique();
-                u.HasIndex(e => e.Email).IsUnique();
-                u.Property(e => e.UserName).HasMaxLength(128);
+                a.HasIndex(e => e.UserName).IsUnique();
+                a.HasIndex(e => e.PhoneNumber).IsUnique();
+                a.HasIndex(e => e.Email).IsUnique();
+                a.Property(e => e.UserName).HasMaxLength(128);
             });
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasMany(x => x.SubCategorys)
+                .WithOne(x => x.ProductCategory)
+                .HasForeignKey(x => x.ProductCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

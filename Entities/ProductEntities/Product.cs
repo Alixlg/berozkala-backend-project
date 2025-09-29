@@ -5,7 +5,6 @@ namespace berozkala_backend.Entities.ProductEntities
 {
     public class Product : DbBaseProps
     {
-        public Guid GuId { get; set; } = Guid.NewGuid();
         public DateTime DateToAdd { get; set; } = DateTime.Now;
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }

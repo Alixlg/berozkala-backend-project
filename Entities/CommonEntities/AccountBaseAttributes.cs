@@ -5,7 +5,6 @@ namespace berozkala_backend.Entities.CommonEntities
 {
     public abstract class AccountBaseAttributes : DbBaseProps
     {
-        public Guid Guid { get; set; } = Guid.NewGuid();
         public required DateTime DateOfSingup { get; set; }
         public required AccountRole AccountRole { get; set; }
         public required string PhoneNumber { get; set; }

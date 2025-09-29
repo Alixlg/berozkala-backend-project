@@ -12,7 +12,7 @@ namespace berozkala_backend.APIs.EndPoints
         {
             app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
-                var product = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+                var product = await db.Products.FirstOrDefaultAsync(p => p.Guid == id);
 
                 if (product == null)
                 {
@@ -23,30 +23,28 @@ namespace berozkala_backend.APIs.EndPoints
                         Message = "محصول مورد نظر یافت نشد !"
                     };
                 }
-                else
-                {
-                    var productPreviewDTO = new ProductPreviewDTO()
-                    {
-                        Id = product.GuId,
-                        IsAvailable = product.IsAvailable,
-                        Brand = product.Brand,
-                        Title = product.Title,
-                        Price = product.Price,
-                        MaxCount = product.MaxCount,
-                        ScoreRank = product.ScoreRank,
-                        DiscountPercent = product.DiscountPercent,
-                        PreviewImageUrl = product.PreviewImageUrl,
-                        Category = product.Category,
-                    };
 
-                    return new RequestResultDTO<ProductPreviewDTO>()
-                    {
-                        IsSuccess = true,
-                        StatusCode = context.Response.StatusCode,
-                        Message = "محصول مورد نظر یافت شد",
-                        Body = productPreviewDTO
-                    };
-                }
+                var productPreviewDTO = new ProductPreviewDTO()
+                {
+                    Id = product.Guid,
+                    IsAvailable = product.IsAvailable,
+                    Brand = product.Brand,
+                    Title = product.Title,
+                    Price = product.Price,
+                    MaxCount = product.MaxCount,
+                    ScoreRank = product.ScoreRank,
+                    DiscountPercent = product.DiscountPercent,
+                    PreviewImageUrl = product.PreviewImageUrl,
+                    Category = product.Category,
+                };
+
+                return new RequestResultDTO<ProductPreviewDTO>()
+                {
+                    IsSuccess = true,
+                    StatusCode = context.Response.StatusCode,
+                    Message = "محصول مورد نظر یافت شد",
+                    Body = productPreviewDTO
+                };
             }).RequireAuthorization();
         }
 
@@ -57,7 +55,7 @@ namespace berozkala_backend.APIs.EndPoints
                 var products = db.Products
                     .Select(p => new ProductPreviewDTO()
                     {
-                        Id = p.GuId,
+                        Id = p.Guid,
                         IsAvailable = p.IsAvailable,
                         Brand = p.Brand,
                         Title = p.Title,

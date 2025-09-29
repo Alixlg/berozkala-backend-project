@@ -8,7 +8,6 @@ namespace berozkala_backend.Entities.OtherEntities
 {
     public class PeymentMethod : DbBaseProps
     {
-        public Guid Guid { get; set; } = Guid.NewGuid();
         public required string MethodName { get; set; }
         public required string MethodDescription { get; set; }
     }

@@ -11,7 +11,6 @@ namespace berozkala_backend.Entities.OrderEntities
 {
     public class Order : DbBaseProps
     {
-        public Guid GuId { get; set; } = Guid.NewGuid();
         public DateTime DateToAdd { get; set; } = DateTime.Now;
         public required OrderStatus OrderStatus { get; set; }
         public required long OrderNumber { get; set; }
