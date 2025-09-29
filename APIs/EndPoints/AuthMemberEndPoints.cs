@@ -1,6 +1,6 @@
 using berozkala_backend.DbContextes;
-using berozkala_backend.DTOs;
-using berozkala_backend.DTOs.Common;
+using berozkala_backend.DTOs.CommonDTOs;
+using berozkala_backend.DTOs.MemberDTOs;
 using berozkala_backend.Entities.AccountsEntities;
 using berozkala_backend.Enums;
 using berozkala_backend.Tools;

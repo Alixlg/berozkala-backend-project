@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using berozkala_backend.DbContextes;
-using berozkala_backend.DTOs;
-using berozkala_backend.DTOs.Common;
+using berozkala_backend.DTOs.CommonDTOs;
+using berozkala_backend.DTOs.ProductDTOs;
 using berozkala_backend.Entities.ProductEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +11,22 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapProductCreate(this WebApplication app)
         {
-            app.MapPost("api/v1/products/create", async ([FromBody] ProductDTO p, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapPost("api/v1/products/create", async ([FromBody] ProductAddDTO p, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
+                var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+
+                if (admin == null)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "شما ادمین نیستید"
+                    };
+                }
+
                 await db.Products.AddAsync(new Product()
                 {
                     IsAvailable = p.IsAvailable,
@@ -27,10 +37,12 @@ namespace berozkala_backend.APIs.EndPoints
                     ScoreRank = p.ScoreRank,
                     DiscountPercent = p.DiscountPercent,
                     PreviewImageUrl = p.PreviewImageUrl,
-                    ImagesUrl = p.ImagesUrl,
+                    ImagesUrls = p.ImagesUrls,
                     Category = p.Category,
                     Description = p.Description,
-                    Review = p.Review
+                    Review = p.Review,
+                    Attributes = p.Attributes,
+                    Garrantys = p.Garrantys
                 });
 
                 await db.SaveChangesAsync();
@@ -43,12 +55,18 @@ namespace berozkala_backend.APIs.EndPoints
                 };
             }).RequireAuthorization();
         }
+
         public static void MapProductList(this WebApplication app)
         {
             app.MapGet("api/v1/products/list", async ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
-                var products = await db.Products
-                    .Select(p => new ProductDTO()
+                var products = db.Products
+                    .Include(p => p.Category)
+                    .Include(p => p.ImagesUrls)
+                    .Include(p => p.Garrantys)
+                    .Include(p => p.Attributes)
+                    .ThenInclude(p => p.Subsets)
+                    .Select(p => new ProductGetDTO()
                     {
                         Id = p.GuId,
                         DateToAdd = p.DateToAdd,
@@ -60,13 +78,15 @@ namespace berozkala_backend.APIs.EndPoints
                         ScoreRank = p.ScoreRank,
                         DiscountPercent = p.DiscountPercent,
                         PreviewImageUrl = p.PreviewImageUrl,
-                        ImagesUrl = p.ImagesUrl,
+                        ImagesUrls = p.ImagesUrls,
                         Category = p.Category,
                         Description = p.Description,
-                        Review = p.Review
-                    }).ToListAsync();
+                        Review = p.Review,
+                        Attributes = p.Attributes,
+                        Garrantys = p.Garrantys
+                    });
 
-                return new RequestResultDTO<List<ProductDTO>>()
+                return new RequestResultDTO<IEnumerable<ProductGetDTO>>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,
@@ -77,13 +97,38 @@ namespace berozkala_backend.APIs.EndPoints
         }
         public static void MapProductGet(this WebApplication app)
         {
-            app.MapGet("api/v1/products/getproduct/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapGet("api/v1/products/getproduct/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
-                var product = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+                var product = await db.Products
+                    .Where(p => p.GuId == id)
+                    .Include(p => p.Category)
+                    .Include(p => p.ImagesUrls)
+                    .Include(p => p.Garrantys)
+                    .Include(p => p.Attributes)
+                    .ThenInclude(p => p.Subsets)
+                    .Select(p => new ProductGetDTO()
+                    {
+                        Id = p.GuId,
+                        DateToAdd = p.DateToAdd,
+                        IsAvailable = p.IsAvailable,
+                        Brand = p.Brand,
+                        Title = p.Title,
+                        Price = p.Price,
+                        MaxCount = p.MaxCount,
+                        ScoreRank = p.ScoreRank,
+                        DiscountPercent = p.DiscountPercent,
+                        PreviewImageUrl = p.PreviewImageUrl,
+                        ImagesUrls = p.ImagesUrls,
+                        Category = p.Category,
+                        Description = p.Description,
+                        Review = p.Review,
+                        Attributes = p.Attributes,
+                        Garrantys = p.Garrantys
+                    }).FirstOrDefaultAsync();
 
                 if (product == null)
                 {
-                    return new RequestResultDTO<ProductDTO>()
+                    return new RequestResultDTO<ProductGetDTO>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -92,38 +137,35 @@ namespace berozkala_backend.APIs.EndPoints
                 }
                 else
                 {
-                    var productDto = new ProductDTO()
-                    {
-                        Id = product.GuId,
-                        DateToAdd = product.DateToAdd,
-                        IsAvailable = product.IsAvailable,
-                        Brand = product.Brand,
-                        Title = product.Title,
-                        Price = product.Price,
-                        MaxCount = product.MaxCount,
-                        ScoreRank = product.ScoreRank,
-                        DiscountPercent = product.DiscountPercent,
-                        PreviewImageUrl = product.PreviewImageUrl,
-                        ImagesUrl = product.ImagesUrl,
-                        Category = product.Category,
-                        Description = product.Description,
-                        Review = product.Review
-                    };
-
-                    return new RequestResultDTO<ProductDTO>()
+                    return new RequestResultDTO<ProductGetDTO>()
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
                         Message = "محصول مورد نظر یافت شد",
-                        Body = productDto
+                        Body = product
                     };
                 }
             }).RequireAuthorization();
         }
+
         public static void MapProductDelete(this WebApplication app)
         {
-            app.MapDelete("api/v1/products/delete/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapDelete("api/v1/products/delete/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
+                var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+
+                if (admin == null)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "شما ادمین نیستید"
+                    };
+                }
+
                 var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
                 if (p == null)
@@ -148,13 +190,35 @@ namespace berozkala_backend.APIs.EndPoints
                     StatusCode = context.Response.StatusCode,
                     Message = "محصول مورد نظر با موفقیت حذف شد !"
                 };
-            });
+            }).RequireAuthorization();
         }
+
         public static void MapProductEdit(this WebApplication app)
         {
-            app.MapPut("api/v1/products/edit/{id}", async ([FromRoute] string id, [FromBody] ProductDTO newProduct, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapPut("api/v1/products/edit/{id}", async ([FromRoute] Guid id, [FromBody] ProductAddDTO newProduct, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
-                var p = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
+                var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+
+                if (admin == null)
+                {
+                    return new RequestResultDTO<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "شما ادمین نیستید"
+                    };
+                }
+
+                var p = await db.Products
+                    .Where(p => p.GuId == id)
+                    .Include(p => p.Category)
+                    .Include(p => p.ImagesUrls)
+                    .Include(p => p.Garrantys)
+                    .Include(p => p.Attributes)
+                    .ThenInclude(p => p.Subsets)
+                    .FirstOrDefaultAsync();
 
                 if (p == null)
                 {
@@ -175,11 +239,12 @@ namespace berozkala_backend.APIs.EndPoints
                 p.ScoreRank = newProduct.ScoreRank;
                 p.DiscountPercent = newProduct.DiscountPercent;
                 p.PreviewImageUrl = newProduct.PreviewImageUrl;
-                p.ImagesUrl = newProduct.ImagesUrl;
+                p.ImagesUrls = newProduct.ImagesUrls;
                 p.Description = newProduct.Description;
                 p.Review = newProduct.Review;
                 p.Garrantys = newProduct.Garrantys;
                 p.Attributes = newProduct.Attributes;
+
                 await db.SaveChangesAsync();
 
                 return new RequestResultDTO<string>()

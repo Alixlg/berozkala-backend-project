@@ -1,12 +1,10 @@
-using berozkala_backend.Entities.CommonEntities;
+using berozkala_backend.Entities.ProductEntities;
 using berozkala_backend.Enums;
 
-namespace berozkala_backend.Entities.ProductEntities
+namespace berozkala_backend.DTOs.ProductDTOs
 {
-    public class Product : DbBaseProps
+    public class ProductAddDTO
     {
-        public Guid GuId { get; set; } = Guid.NewGuid();
-        public DateTime DateToAdd { get; set; } = DateTime.Now;
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }
         public required string Title { get; set; }

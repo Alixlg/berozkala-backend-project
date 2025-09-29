@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using berozkala_backend.Entities.Base;
+using berozkala_backend.Entities.CommonEntities;
 
 namespace berozkala_backend.Entities.ProductEntities
 {

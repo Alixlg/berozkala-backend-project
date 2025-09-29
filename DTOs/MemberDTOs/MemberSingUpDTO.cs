@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using berozkala_backend.Enums;
-
-namespace berozkala_backend.DTOs
+namespace berozkala_backend.DTOs.MemberDTOs
 {
     public class MemberSingUpDTO
     {

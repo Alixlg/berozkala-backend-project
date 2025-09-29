@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using berozkala_backend.Entities.AccountsEntities;
+using berozkala_backend.Entities.OrderEntities;
+using berozkala_backend.Entities.OtherEntities;
 using berozkala_backend.Entities.ProductEntities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +11,11 @@ namespace berozkala_backend.DbContextes
         public DbSet<Product> Products { get; set; }
         public DbSet<AdminAccount> Admins { get; set; }
         public DbSet<UserAccount> Users { get; set; }
+        public DbSet<ShippingMethod> ShippingMethods { get; set; }
+        public DbSet<PeymentMethod> PeymentMethods { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<DiscountCode> DiscountCodes { get; set; }
+        public DbSet<ProductCategory> ProductCategorys { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

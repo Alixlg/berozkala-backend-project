@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace berozkala_backend.DTOs
+namespace berozkala_backend.DTOs.MemberDTOs
 {
     public class MemberSubmitCodeDTO
     {

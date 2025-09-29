@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using berozkala_backend.DbContextes;
-using berozkala_backend.DTOs;
-using berozkala_backend.DTOs.Common;
+using berozkala_backend.DTOs.CommonDTOs;
+using berozkala_backend.DTOs.ProductDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +10,7 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapProductPreviewGet(this WebApplication app)
         {
-            app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] string id, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var product = await db.Products.FirstOrDefaultAsync(p => p.GuId == id);
 
@@ -53,11 +49,12 @@ namespace berozkala_backend.APIs.EndPoints
                 }
             }).RequireAuthorization();
         }
+
         public static void MapProductPreviewList(this WebApplication app)
         {
             app.MapGet("api/v1/productsprevirw/list", async ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
-                var products = await db.Products
+                var products = db.Products
                     .Select(p => new ProductPreviewDTO()
                     {
                         Id = p.GuId,
@@ -69,10 +66,10 @@ namespace berozkala_backend.APIs.EndPoints
                         ScoreRank = p.ScoreRank,
                         DiscountPercent = p.DiscountPercent,
                         PreviewImageUrl = p.PreviewImageUrl,
-                        Category = p.Category,
-                    }).ToListAsync();
+                        Category = p.Category
+                    });
 
-                return new RequestResultDTO<List<ProductPreviewDTO>>()
+                return new RequestResultDTO<IEnumerable<ProductPreviewDTO>>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,
