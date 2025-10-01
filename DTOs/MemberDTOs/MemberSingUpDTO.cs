@@ -1,6 +1,6 @@
 namespace berozkala_backend.DTOs.MemberDTOs
 {
-    public class MemberSingUpDTO
+    public class MemberSingUpDto
     {
         public required string PhoneNumber { get; set; }
         public required string UserName { get; set; }

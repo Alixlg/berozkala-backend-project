@@ -15,7 +15,9 @@ namespace berozkala_backend.DbContextes
         public DbSet<PeymentMethod> PeymentMethods { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
-        public DbSet<ProductCategory> ProductCategorys { get; set; }
+        public DbSet<Category> Categorys { get; set; }
+        public DbSet<SubCategory> SubCategorys { get; set; }
+        public DbSet<ProductsSubCategorys> ProductsSubCategorys { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,7 +42,7 @@ namespace berozkala_backend.DbContextes
                 a.Property(e => e.UserName).HasMaxLength(128);
             });
 
-            modelBuilder.Entity<ProductCategory>()
+            modelBuilder.Entity<Category>()
                 .HasMany(x => x.SubCategorys)
                 .WithOne(x => x.ProductCategory)
                 .HasForeignKey(x => x.ProductCategoryId)

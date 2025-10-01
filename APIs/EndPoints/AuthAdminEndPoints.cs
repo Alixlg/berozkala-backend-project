@@ -12,12 +12,12 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapAuthAdminLogin(this WebApplication app)
         {
-            app.MapPost("api/v1/auth/admin/login", async ([FromServices] BerozkalaDb db, [FromBody] LoginWithUsernameDTO dto,
+            app.MapPost("api/v1/auth/admin/login", async ([FromServices] BerozkalaDb db, [FromBody] LoginWithUsernameDto dto,
                 HttpContext context) =>
             {
                 if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.PassWord))
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -30,7 +30,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (admin == null)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -40,7 +40,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (admin.PassWord != dto.PassWord)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -48,9 +48,9 @@ namespace berozkala_backend.APIs.EndPoints
                     };
                 }
 
-                var token = JwtTools.GenerateJwtToken(admin.UserName, admin.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
+                var token = JwtTools.GenerateJwtToken(admin.UserName, admin.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(300));
 
-                return new RequestResultDTO<string>()
+                return new RequestResultDto<string>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,

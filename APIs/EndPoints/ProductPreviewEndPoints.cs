@@ -10,13 +10,13 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapProductPreviewGet(this WebApplication app)
         {
-            app.MapGet("api/v1/productsprevirw/get/{id}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapGet("api/v1/productsprevirw/get/{id:Guid}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var product = await db.Products.FirstOrDefaultAsync(p => p.Guid == id);
 
                 if (product == null)
                 {
-                    return new RequestResultDTO<ProductPreviewDTO>()
+                    return new RequestResultDto<ProductPreviewDto>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -24,7 +24,7 @@ namespace berozkala_backend.APIs.EndPoints
                     };
                 }
 
-                var productPreviewDTO = new ProductPreviewDTO()
+                var productPreviewDto = new ProductPreviewDto()
                 {
                     Id = product.Guid,
                     IsAvailable = product.IsAvailable,
@@ -34,26 +34,25 @@ namespace berozkala_backend.APIs.EndPoints
                     MaxCount = product.MaxCount,
                     ScoreRank = product.ScoreRank,
                     DiscountPercent = product.DiscountPercent,
-                    PreviewImageUrl = product.PreviewImageUrl,
-                    Category = product.Category,
+                    PreviewImageUrl = product.PreviewImageUrl
                 };
 
-                return new RequestResultDTO<ProductPreviewDTO>()
+                return new RequestResultDto<ProductPreviewDto>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,
                     Message = "محصول مورد نظر یافت شد",
-                    Body = productPreviewDTO
+                    Body = productPreviewDto
                 };
             }).RequireAuthorization();
         }
 
         public static void MapProductPreviewList(this WebApplication app)
         {
-            app.MapGet("api/v1/productsprevirw/list", async ([FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapGet("api/v1/productsprevirw/list", ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 var products = db.Products
-                    .Select(p => new ProductPreviewDTO()
+                    .Select(p => new ProductPreviewDto()
                     {
                         Id = p.Guid,
                         IsAvailable = p.IsAvailable,
@@ -63,11 +62,10 @@ namespace berozkala_backend.APIs.EndPoints
                         MaxCount = p.MaxCount,
                         ScoreRank = p.ScoreRank,
                         DiscountPercent = p.DiscountPercent,
-                        PreviewImageUrl = p.PreviewImageUrl,
-                        Category = p.Category
+                        PreviewImageUrl = p.PreviewImageUrl
                     });
 
-                return new RequestResultDTO<IEnumerable<ProductPreviewDTO>>()
+                return new RequestResultDto<IEnumerable<ProductPreviewDto>>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,

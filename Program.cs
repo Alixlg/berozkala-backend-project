@@ -1,6 +1,7 @@
 using System.Text;
 using berozkala_backend.APIs.EndPoints;
 using berozkala_backend.DbContextes;
+using berozkala_backend.Entities.ProductEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -56,11 +57,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapProductList();
+// app.MapProductList();
 app.MapProductCreate();
-app.MapProductGet();
-app.MapProductDelete();
-app.MapProductEdit();
+// app.MapProductGet();
+// app.MapProductDelete();
+// app.MapProductEdit();
 
 app.MapProductPreviewGet();
 app.MapProductPreviewList();
@@ -73,8 +74,13 @@ app.MapAuthMemberLoginSubmitCode();
 app.MapAuthAdminLogin();
 
 app.MapCategoryCreate();
-app.MapCategoryDelete();
+app.MapGenericDelete<Category>("category");
 app.MapCategoryEdit();
 app.MapCategoryList();
+
+app.MapSubCategoryCreate();
+app.MapSubCategoryEdit();
+app.MapSubCategoryGet();
+app.MapGenericDelete<SubCategory>("subcategory");
 
 app.Run();

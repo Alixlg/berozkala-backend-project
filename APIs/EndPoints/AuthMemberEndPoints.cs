@@ -13,12 +13,12 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapAuthMemberSingUp(this WebApplication app)
         {
-            app.MapPost("api/v1/auth/member/singup", async ([FromServices] BerozkalaDb db, [FromBody] MemberSingUpDTO dto,
+            app.MapPost("api/v1/auth/member/singup", async ([FromServices] BerozkalaDb db, [FromBody] MemberSingUpDto dto,
                 HttpContext context) =>
             {
                 if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.PhoneNumber) || string.IsNullOrWhiteSpace(dto.PassWord))
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -29,7 +29,7 @@ namespace berozkala_backend.APIs.EndPoints
                 var result = await db.Users.AnyAsync(u => u.UserName == dto.UserName || u.PhoneNumber == dto.PhoneNumber);
                 if (result)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -55,7 +55,7 @@ namespace berozkala_backend.APIs.EndPoints
                 await db.Users.AddAsync(user);
                 await db.SaveChangesAsync();
 
-                return new RequestResultDTO<string>()
+                return new RequestResultDto<string>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,
@@ -67,12 +67,12 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapAuthMemberLoginWithUserName(this WebApplication app)
         {
-            app.MapPost("api/v1/auth/member/login-with-username", async ([FromServices] BerozkalaDb db, [FromBody] LoginWithUsernameDTO dto,
+            app.MapPost("api/v1/auth/member/login-with-username", async ([FromServices] BerozkalaDb db, [FromBody] LoginWithUsernameDto dto,
                 HttpContext context) =>
             {
                 if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.PassWord))
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -85,7 +85,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (user == null)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -95,7 +95,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (user.PassWord != dto.PassWord)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -105,7 +105,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
 
-                return new RequestResultDTO<string>()
+                return new RequestResultDto<string>()
                 {
                     IsSuccess = true,
                     StatusCode = context.Response.StatusCode,
@@ -117,12 +117,12 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapAuthMemberLoginWithCode(this WebApplication app)
         {
-            app.MapPost("api/v1/auth/member/login-with-code", async ([FromServices] BerozkalaDb db, [FromBody] MemberLoginWithCodeDTO dto,
+            app.MapPost("api/v1/auth/member/login-with-code", async ([FromServices] BerozkalaDb db, [FromBody] MemberLoginWithCodeDto dto,
                 HttpContext context) =>
             {
                 if (string.IsNullOrWhiteSpace(dto.PhoneNumber))
                 {
-                    return new RequestResultDTO<int>()
+                    return new RequestResultDto<int>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -135,7 +135,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (user == null)
                 {
-                    return new RequestResultDTO<int>()
+                    return new RequestResultDto<int>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -154,7 +154,7 @@ namespace berozkala_backend.APIs.EndPoints
                     user.OptLifeTime = DateTime.Now.AddMinutes(2);
                     await db.SaveChangesAsync();
 
-                    return new RequestResultDTO<int>()
+                    return new RequestResultDto<int>()
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
@@ -164,7 +164,7 @@ namespace berozkala_backend.APIs.EndPoints
                 else
                 {
                     var left = user.OptLifeTime - DateTime.Now;
-                    return new RequestResultDTO<int>()
+                    return new RequestResultDto<int>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -176,12 +176,12 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapAuthMemberLoginSubmitCode(this WebApplication app)
         {
-            app.MapPost("api/v1/auth/member/login-submit-code", async ([FromServices] BerozkalaDb db, [FromBody] MemberSubmitCodeDTO dto,
+            app.MapPost("api/v1/auth/member/login-submit-code", async ([FromServices] BerozkalaDb db, [FromBody] MemberSubmitCodeDto dto,
                 HttpContext context) =>
             {
                 if (string.IsNullOrWhiteSpace(dto.PhoneNumber))
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -194,7 +194,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                 if (user == null)
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
@@ -208,7 +208,7 @@ namespace berozkala_backend.APIs.EndPoints
                     {
                         var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
 
-                        return new RequestResultDTO<string>()
+                        return new RequestResultDto<string>()
                         {
                             IsSuccess = true,
                             StatusCode = context.Response.StatusCode,
@@ -218,7 +218,7 @@ namespace berozkala_backend.APIs.EndPoints
                     }
                     else
                     {
-                        return new RequestResultDTO<string>()
+                        return new RequestResultDto<string>()
                         {
                             IsSuccess = false,
                             StatusCode = context.Response.StatusCode,
@@ -228,7 +228,7 @@ namespace berozkala_backend.APIs.EndPoints
                 }
                 else
                 {
-                    return new RequestResultDTO<string>()
+                    return new RequestResultDto<string>()
                     {
                         IsSuccess = false,
                         StatusCode = context.Response.StatusCode,
