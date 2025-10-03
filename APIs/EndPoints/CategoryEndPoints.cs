@@ -98,7 +98,7 @@ namespace berozkala_backend.APIs.EndPoints
                         {
                             Id = x.Guid,
                             CategoryName = x.CategoryName,
-                            SubCategorys = x.SubCategorys.Select(s => new SubCategoryAddDto()
+                            SubCategorys = x.SubCategorys!.Select(s => new SubCategoryAddDto()
                             {
                                 Id = s.Guid,
                                 SubCategoryName = s.SubCategoryName

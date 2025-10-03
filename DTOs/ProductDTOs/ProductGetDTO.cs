@@ -17,10 +17,10 @@ namespace berozkala_backend.DTOs.ProductDTOs
         public Score ScoreRank { get; set; }
         public decimal DiscountPercent { get; set; }
         public string? PreviewImageUrl { get; set; }
-        public ProductImageDto? ImagesUrls { get; set; }
+        public List<ImageDto>? ImagesUrls { get; set; }
         public string? Description { get; set; }
         public string? Review { get; set; }
-        public List<ProductGarrantyDto>? Garrantys { get; set; }
-        public List<ProductAttributeDto>? Attributes { get; set; }
+        public List<GarrantyDto>? Garrantys { get; set; }
+        public List<AttributeDto>? Attributes { get; set; }
     }
 }

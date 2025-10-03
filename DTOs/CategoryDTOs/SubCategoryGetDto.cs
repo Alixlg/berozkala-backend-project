@@ -4,6 +4,5 @@ namespace berozkala_backend.DTOs.CategoryDTOs
     {
         public required Guid Id { get; set; }
         public required string SubCategoryName { get; set; }
-        public required CategoryGetDto Category { get; set; }
     }
 }

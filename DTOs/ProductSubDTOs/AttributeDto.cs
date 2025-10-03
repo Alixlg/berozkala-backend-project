@@ -2,7 +2,7 @@ using berozkala_backend.Entities.ProductEntities;
 
 namespace berozkala_backend.DTOs.ProductSubDTOs
 {
-    public class ProductAttributeDto
+    public class AttributeDto
     {
         public Guid? Id { get; set; }
         public required string TitleName { get; set; }

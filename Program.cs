@@ -57,13 +57,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// app.MapProductList();
+app.MapProductList();
 app.MapProductCreate();
 // app.MapProductGet();
 // app.MapProductDelete();
 // app.MapProductEdit();
 
-app.MapProductPreviewGet();
+// app.MapProductPreviewGet();
 app.MapProductPreviewList();
 
 app.MapAuthMemberSingUp();

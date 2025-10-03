@@ -2,7 +2,7 @@ using berozkala_backend.Entities.ProductEntities;
 
 namespace berozkala_backend.DTOs.ProductSubDTOs
 {
-    public class ProductGarrantyDto
+    public class GarrantyDto
     {
         public Guid? Id { get; set; }
         public required string Name { get; set; }

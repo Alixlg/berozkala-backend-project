@@ -100,12 +100,7 @@ namespace berozkala_backend.APIs.EndPoints
                     var dto = new SubCategoryGetDto()
                     {
                         Id = subCategory.Guid,
-                        SubCategoryName = subCategory.SubCategoryName,
-                        Category = new CategoryGetDto()
-                        {
-                            Id = subCategory.ProductCategory.Guid,
-                            CategoryName = subCategory.ProductCategory.CategoryName
-                        }
+                        SubCategoryName = subCategory.SubCategoryName
                     };
 
                     return new RequestResultDto<SubCategoryGetDto>()
