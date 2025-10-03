@@ -9,7 +9,7 @@ namespace berozkala_backend.DTOs.ProductDTOs
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }
         public required string Title { get; set; }
-        public List<Guid>? SubCategorys { get; set; }
+        public List<Guid>? SubCategoryIds { get; set; }
         public required decimal Price { get; set; }
         public required int MaxCount { get; set; }
         public Score ScoreRank { get; set; }

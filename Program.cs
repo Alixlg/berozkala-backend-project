@@ -59,12 +59,17 @@ app.UseHttpsRedirection();
 
 app.MapProductList();
 app.MapProductCreate();
-// app.MapProductGet();
-// app.MapProductDelete();
-// app.MapProductEdit();
-
-// app.MapProductPreviewGet();
+app.MapProductEdit();
 app.MapProductPreviewList();
+
+app.MapAddCategorysToProduct();
+app.MapRemoveCategorysProduct();
+
+app.MapAddImagesProduct();
+app.MapDeleteImagesProduct();
+
+app.MapDeleteGarrantysProduct();
+app.MapAddGarrantysProduct();
 
 app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();

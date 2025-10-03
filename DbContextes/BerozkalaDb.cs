@@ -17,6 +17,9 @@ namespace berozkala_backend.DbContextes
         public DbSet<DiscountCode> DiscountCodes { get; set; }
         public DbSet<Category> Categorys { get; set; }
         public DbSet<SubCategory> SubCategorys { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ProductGarranty> ProductGarrantys { get; set; }
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
         public DbSet<ProductsSubCategorys> ProductsSubCategorys { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

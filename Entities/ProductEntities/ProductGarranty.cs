@@ -6,5 +6,7 @@ namespace berozkala_backend.Entities.ProductEntities
     {
         public required string Name { get; set; }
         public long GarrantyCode { get; set; }
+        public int ProductId { get; set; }
+        public Product? Product { get; set; }
     }
 }

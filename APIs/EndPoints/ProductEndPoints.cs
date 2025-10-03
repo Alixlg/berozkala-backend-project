@@ -2,6 +2,7 @@ using berozkala_backend.DbContextes;
 using berozkala_backend.DTOs.CategoryDTOs;
 using berozkala_backend.DTOs.CommonDTOs;
 using berozkala_backend.DTOs.ProductDTOs;
+using berozkala_backend.DTOs.ProductSubDtos;
 using berozkala_backend.DTOs.ProductSubDTOs;
 using berozkala_backend.Entities.ProductEntities;
 using berozkala_backend.Enums;
@@ -24,7 +25,7 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(userGuid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    dto.SubCategorys?.ForEach(c =>
+                    dto.SubCategoryIds?.ForEach(c =>
                     {
                         if (!db.SubCategorys.Any(x => x.Guid == c))
                         {
@@ -51,16 +52,16 @@ namespace berozkala_backend.APIs.EndPoints
 
                     await db.Products.AddAsync(product);
 
-                    if (dto.SubCategorys != null && dto.SubCategorys.Any())
+                    if (dto.SubCategoryIds != null && dto.SubCategoryIds.Any())
                     {
                         var subCategorys = db.SubCategorys
-                            .Where(x => (dto.SubCategorys).Contains(x.Guid))
-                            .Select(s => new { s.Id });
+                            .Where(x => dto.SubCategoryIds.Contains(x.Guid))
+                            .Select(s => s);
 
                         var productsSubCategorys = subCategorys.Select(x => new ProductsSubCategorys()
                         {
                             Product = product,
-                            SubCategoryId = x.Id
+                            SubCategory = x
                         });
 
                         await db.ProductsSubCategorys.AddRangeAsync(productsSubCategorys);
@@ -89,7 +90,7 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapProductList(this WebApplication app)
         {
-            app.MapPost("api/v1/products/list", async ([FromQuery] string? searchQuery,
+            app.MapGet("api/v1/products/list", async ([FromQuery] string? searchQuery,
                 [FromBody] ProductGetListDto dto, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -214,112 +215,158 @@ namespace berozkala_backend.APIs.EndPoints
             }).RequireAuthorization();
         }
 
-        // public static void MapProductDelete(this WebApplication app)
-        // {
-        //     app.MapDelete("api/v1/products/delete/{id:Guid}", async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
-        //     {
-        //         var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+        public static void MapProductEdit(this WebApplication app)
+        {
+            app.MapPut("api/v1/products/edit/{id:Guid}", async ([FromRoute] Guid id, [FromBody] ProductEditDto newProduct, [FromServices] BerozkalaDb db, HttpContext context) =>
+            {
+                try
+                {
+                    var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
 
-        //         var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+                    var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
+                        ?? throw new Exception("شما ادمین نیستید");
 
-        //         if (admin == null)
-        //         {
-        //             return new RequestResultDTO<string>()
-        //             {
-        //                 IsSuccess = false,
-        //                 StatusCode = context.Response.StatusCode,
-        //                 Message = "شما ادمین نیستید"
-        //             };
-        //         }
+                    var p = await db.Products
+                        .Where(p => p.Guid == id)
+                        .FirstOrDefaultAsync() ?? throw new Exception("محصول مورد نظر یافت نشد");
 
-        //         var p = await db.Products.FirstOrDefaultAsync(p => p.Guid == id);
+                    p.IsAvailable = newProduct.IsAvailable;
+                    p.Brand = newProduct.Brand;
+                    p.Title = newProduct.Title;
+                    p.Price = newProduct.Price;
+                    p.MaxCount = newProduct.MaxCount;
+                    p.DiscountPercent = newProduct.DiscountPercent;
+                    p.ScoreRank = newProduct.ScoreRank == 0 ? p.ScoreRank : newProduct.ScoreRank;
+                    p.PreviewImageUrl = newProduct.PreviewImageUrl ?? p.PreviewImageUrl;
+                    p.Description = newProduct.Description ?? p.Description;
+                    p.Review = newProduct.Review ?? p.Review;
 
-        //         if (p == null)
-        //         {
-        //             return new RequestResultDTO<string>()
-        //             {
-        //                 IsSuccess = false,
-        //                 StatusCode = context.Response.StatusCode,
-        //                 Message = "محصول مورد نظر یافت نشد !"
-        //             };
-        //         }
-        //         else
-        //         {
-        //             db.Products.Remove(p);
-        //         }
+                    await db.SaveChangesAsync();
 
-        //         await db.SaveChangesAsync();
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "محصول با موفقیت ویرایش شد !"
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = ex.Message
+                    };
+                }
+            }).RequireAuthorization();
+        }
 
-        //         return new RequestResultDTO<string>()
-        //         {
-        //             IsSuccess = true,
-        //             StatusCode = context.Response.StatusCode,
-        //             Message = "محصول مورد نظر با موفقیت حذف شد !"
-        //         };
-        //     }).RequireAuthorization();
-        // }
+        public static void MapAddCategorysToProduct(this WebApplication app)
+        {
+            app.MapPost("api/v1/products/add-categorys", async ([FromBody] SubCategoryToProductDto dto,
+                [FromServices] BerozkalaDb db, HttpContext context) =>
+            {
+                try
+                {
+                    var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
 
-        // public static void MapProductEdit(this WebApplication app)
-        // {
-        //     app.MapPut("api/v1/products/edit/{id:Guid}", async ([FromRoute] Guid id, [FromBody] ProductAddDto newProduct, [FromServices] BerozkalaDb db, HttpContext context) =>
-        //     {
-        //         var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+                    var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
+                        ?? throw new Exception("شما ادمین نیستید");
 
-        //         var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+                    var product = await db.Products.FirstOrDefaultAsync(P => P.Guid == dto.ProductId)
+                        ?? throw new Exception("محصول مورد نظر یافت نشد");
 
-        //         if (admin == null)
-        //         {
-        //             return new RequestResultDTO<string>()
-        //             {
-        //                 IsSuccess = false,
-        //                 StatusCode = context.Response.StatusCode,
-        //                 Message = "شما ادمین نیستید"
-        //             };
-        //         }
+                    var subCategorys = db.SubCategorys
+                        .Where(x => dto.SubCategoryIds.Contains(x.Guid))
+                        .Select(s => s.Id);
 
-        //         var p = await db.Products
-        //             .Where(p => p.Guid == id)
-        //             .Include(p => p.SubCategorys)
-        //             .Include(p => p.ImagesUrls)
-        //             .Include(p => p.Garrantys)
-        //             .Include(p => p.Attributes)
-        //             .ThenInclude(p => p.Subsets)
-        //             .FirstOrDefaultAsync();
+                    var productsSubCategorys = subCategorys
+                        .Select(x => new ProductsSubCategorys()
+                        {
+                            Product = product,
+                            SubCategoryId = x
+                        })
+                        .ToList();
 
-        //         if (p == null)
-        //         {
-        //             return new RequestResultDTO<string>()
-        //             {
-        //                 IsSuccess = false,
-        //                 StatusCode = context.Response.StatusCode,
-        //                 Message = "محصول مورد نظر یافت نشد !"
-        //             };
-        //         }
+                    if (!productsSubCategorys.Any())
+                        throw new Exception("کتگوری ها وجود ندارند");
 
-        //         p.IsAvailable = newProduct.IsAvailable;
-        //         p.Brand = newProduct.Brand;
-        //         p.Title = newProduct.Title;
-        //         p.SubCategorys = newProduct.SubCategorys;
-        //         p.Price = newProduct.Price;
-        //         p.MaxCount = newProduct.MaxCount;
-        //         p.ScoreRank = newProduct.ScoreRank;
-        //         p.DiscountPercent = newProduct.DiscountPercent;
-        //         p.PreviewImageUrl = newProduct.PreviewImageUrl;
-        //         p.ImagesUrls = newProduct.ImagesUrls;
-        //         p.Description = newProduct.Description;
-        //         p.Review = newProduct.Review;
-        //         p.Garrantys = newProduct.Garrantys;
-        //         p.Attributes = newProduct.Attributes;
+                    var currentRelations = await db.ProductsSubCategorys
+                        .Where(x => x.ProductId == product.Id && subCategorys.Contains(x.SubCategoryId))
+                        .ToListAsync();
 
-        //         await db.SaveChangesAsync();
+                    if (currentRelations.Any())
+                        throw new Exception("کتگوری ها قبلا به پروداکت اظافه شده اند");
 
-        //         return new RequestResultDTO<string>()
-        //         {
-        //             IsSuccess = true,
-        //             StatusCode = context.Response.StatusCode,
-        //             Message = "محصول با موفقیت ویرایش شد !"
-        //         };
-        //     }).RequireAuthorization();
-        // }
+                    await db.ProductsSubCategorys.AddRangeAsync(productsSubCategorys);
+                    await db.SaveChangesAsync();
+
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "کتگوری با موفقیت به پروداکت اظافه شد"
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = ex.Message
+                    };
+                }
+            }).RequireAuthorization();
+        }
+
+        public static void MapRemoveCategorysProduct(this WebApplication app)
+        {
+            app.MapDelete("api/v1/products/remove-categorys", async ([FromBody] SubCategoryToProductDto dto,
+                [FromServices] BerozkalaDb db, HttpContext context) =>
+            {
+                try
+                {
+                    var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                    var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
+                        ?? throw new Exception("شما ادمین نیستید");
+
+                    var product = await db.Products.FirstOrDefaultAsync(P => P.Guid == dto.ProductId)
+                        ?? throw new Exception("محصول مورد نظر یافت نشد");
+
+                    var subCategorys = db.SubCategorys
+                        .Where(x => dto.SubCategoryIds.Contains(x.Guid))
+                        .Select(s => s.Id);
+
+                    var currentRelations = await db.ProductsSubCategorys
+                        .Where(x => x.ProductId == product.Id && subCategorys.Contains(x.SubCategoryId))
+                        .ToListAsync();
+
+                    if (!currentRelations.Any())
+                        throw new Exception("کتگوری ها قبلا از پروداکت حذف شده اند");
+
+                    db.ProductsSubCategorys.RemoveRange(currentRelations);
+                    await db.SaveChangesAsync();
+
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "کتگوری ها با موفقیت از پروداکت حذف شدند"
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = ex.Message
+                    };
+                }
+            }).RequireAuthorization();
+        }
     }
 }

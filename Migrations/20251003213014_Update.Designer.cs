@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using berozkala_backend.DbContextes;
 
@@ -10,9 +11,11 @@ using berozkala_backend.DbContextes;
 namespace berozkala_backend.Migrations
 {
     [DbContext(typeof(BerozkalaDb))]
-    partial class BerozkalaDbModelSnapshot : ModelSnapshot
+    [Migration("20251003213014_Update")]
+    partial class Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -473,9 +476,6 @@ namespace berozkala_backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
@@ -483,13 +483,16 @@ namespace berozkala_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ProductAttributeId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeId");
+                    b.HasIndex("ProductAttributeId");
 
                     b.ToTable("AttributeSubset");
                 });
@@ -602,7 +605,7 @@ namespace berozkala_backend.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("TitleName")
@@ -613,7 +616,7 @@ namespace berozkala_backend.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductAttributes");
+                    b.ToTable("ProductAttribute");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductGarranty", b =>
@@ -632,14 +635,14 @@ namespace berozkala_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductGarrantys");
+                    b.ToTable("ProductGarranty");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductImage", b =>
@@ -658,14 +661,14 @@ namespace berozkala_backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImage");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductsSubCategorys", b =>
@@ -823,13 +826,9 @@ namespace berozkala_backend.Migrations
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.AttributeSubset", b =>
                 {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.ProductAttribute", "Attribute")
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.ProductAttribute", null)
                         .WithMany("Subsets")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attribute");
+                        .HasForeignKey("ProductAttributeId");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.BasketProduct", b =>
@@ -859,35 +858,23 @@ namespace berozkala_backend.Migrations
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductAttribute", b =>
                 {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", "Product")
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", null)
                         .WithMany("Attributes")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductGarranty", b =>
                 {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", "Product")
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", null)
                         .WithMany("Garrantys")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductImage", b =>
                 {
-                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", "Product")
+                    b.HasOne("berozkala_backend.Entities.ProductEntities.Product", null)
                         .WithMany("ImagesUrls")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("berozkala_backend.Entities.ProductEntities.ProductsSubCategorys", b =>
