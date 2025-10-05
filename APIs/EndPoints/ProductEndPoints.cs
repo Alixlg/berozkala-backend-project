@@ -90,7 +90,7 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapProductList(this WebApplication app)
         {
-            app.MapGet("api/v1/products/list", async ([FromQuery] string? searchQuery,
+            app.MapPost("api/v1/products/list", async ([FromQuery] string? searchQuery,
                 [FromBody] ProductGetListDto dto, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try

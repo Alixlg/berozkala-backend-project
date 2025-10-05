@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using berozkala_backend.DbContextes;
 using berozkala_backend.DTOs.CommonDTOs;
-using berozkala_backend.DTOs.ProductSubDtos;
 using berozkala_backend.DTOs.ProductSubDTOs;
 using berozkala_backend.Entities.ProductEntities;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace berozkala_backend.APIs.EndPoints
 {
-    public static class ImageEndPoints
+    public static class AttributeSubsetEndPoints
     {
-        public static void MapAddImagesProduct(this WebApplication app)
+        public static void MapAddSubsetAttributesProduct(this WebApplication app)
         {
-            app.MapPost("api/v1/products/add-images", async ([FromBody] GeneticToProductDto<ImageDto> dto,
+            app.MapPost("api/v1/products/add-subsetattribute", async ([FromBody] GeneticToProductDto<AttributeSubsetDto> dto,
                 [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -22,26 +25,25 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    var product = await db.Products
-                        .Include(x => x.ImagesUrls)
+                    var attribute = await db.ProductAttributes
                         .FirstOrDefaultAsync(P => P.Guid == dto.EntityId)
-                            ?? throw new Exception("محصول مورد نظر یافت نشد");
+                            ?? throw new Exception("اتربیوت مورد نظر یافت نشد");
 
-                    var images = dto.Items.Select(x => new ProductImage
+                    var subsetAttributes = dto.Items.Select(x => new AttributeSubset()
                     {
-                        Product = product,
-                        ImageName = x.ImageName,
-                        ImagePath = x.ImagePath
+                        Name = x.Name,
+                        Value = x.Value,
+                        Attribute = attribute
                     });
 
-                    await db.ProductImages.AddRangeAsync(images);
+                    await db.AddRangeAsync(subsetAttributes);
                     await db.SaveChangesAsync();
 
                     return new RequestResultDto<string>()
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
-                        Message = "عکس های مورد نظر با موفقیت اظافه شدند"
+                        Message = "زیر مجموعه های مورد نظر با موفقیت اظافه شدند"
                     };
                 }
                 catch (Exception ex)
@@ -56,9 +58,9 @@ namespace berozkala_backend.APIs.EndPoints
             }).RequireAuthorization();
         }
 
-        public static void MapDeleteImagesProduct(this WebApplication app)
+        public static void MapDeleteSubsetAttributesProduct(this WebApplication app)
         {
-            app.MapDelete("api/v1/products/delete-images", async ([FromBody] GeneticToProductDto<Guid> dto,
+            app.MapDelete("api/v1/products/delete-subsetattribute", async ([FromBody] GeneticToProductDto<Guid> dto,
                 [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -68,31 +70,33 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    var product = await db.Products
-                        .Include(x => x.ImagesUrls)
+                    var attribute = await db.ProductAttributes
+                        .Include(x => x.Subsets)
                         .FirstOrDefaultAsync(P => P.Guid == dto.EntityId)
-                            ?? throw new Exception("محصول مورد نظر یافت نشد");
+                            ?? throw new Exception("اتربیوت مورد نظر یافت نشد");
 
-                    if (product.ImagesUrls == null || !product.ImagesUrls.Any())
+                    if (attribute.Subsets == null || !attribute.Subsets.Any())
                     {
-                        throw new Exception("این محصول عکسی برای حذف ندارد");
+                        throw new Exception("این محصول زیر مجموعه ای برای حذف ندارد");
                     }
 
-                    var images = product.ImagesUrls
+                    var attributes = attribute.Subsets
                         .Where(x => dto.Items.Contains(x.Guid))
                         .Select(x => x);
 
-                    if (!images.Any())
-                        throw new Exception("تصاویر مورد نظر وجود ندارند");
+                    if (attributes == null || !attributes.Any())
+                    {
+                        throw new Exception("زیر مجموعه های مورد نظر وجود ندارند");
+                    }
 
-                    db.ProductImages.RemoveRange(images);
+                    db.RemoveRange(attributes);
                     await db.SaveChangesAsync();
 
                     return new RequestResultDto<string>()
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
-                        Message = "عکس های مورد نظر با موفقیت حذف شدند"
+                        Message = "زیر مجموعه های مورد نظر با موفقیت حذف شدند"
                     };
                 }
                 catch (Exception ex)
@@ -107,9 +111,9 @@ namespace berozkala_backend.APIs.EndPoints
             }).RequireAuthorization();
         }
 
-        public static void MapEditImagesProduct(this WebApplication app)
+        public static void MapEditSubsetAttributesProduct(this WebApplication app)
         {
-            app.MapPut("api/v1/products/edit-images", async ([FromBody] List<ImageEditDto> dto,
+            app.MapPut("api/v1/products/edit-subsetattribute", async ([FromBody] List<AttributeSubsetEditDto> dto,
                 [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -119,19 +123,19 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    var images = db.ProductImages
+                    var subsetAttributes = db.ProductSubsetAttributes
                         .Where(x => dto.Select(d => d.Id).Contains(x.Guid));
 
-                    if (!images.Any())
-                        throw new Exception("عکس های مورد نظر وجود ندارند");
+                    if (!subsetAttributes.Any())
+                        throw new Exception("زیر مجموعه های مورد نظر وجود ندارند");
 
                     dto.ForEach(d =>
                     {
-                        var i = images.FirstOrDefault(g => g.Guid == d.Id);
-                        if (i != null)
+                        var s = subsetAttributes.FirstOrDefault(g => g.Guid == d.Id);
+                        if (s != null)
                         {
-                            i.ImageName = d.ImageName;
-                            i.ImagePath = d.ImagePath;
+                            s.Name = d.Name;
+                            s.Value = d.Value;
                         }
                     });
 
@@ -141,7 +145,7 @@ namespace berozkala_backend.APIs.EndPoints
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
-                        Message = "عکس های مورد نظر با موفقیت ویرایش شد"
+                        Message = "زیر مجموعه های مورد نظر با موفقیت ویرایش شد"
                     };
                 }
                 catch (Exception ex)

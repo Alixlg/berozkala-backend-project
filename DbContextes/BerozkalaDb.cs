@@ -20,6 +20,7 @@ namespace berozkala_backend.DbContextes
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductGarranty> ProductGarrantys { get; set; }
         public DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public DbSet<AttributeSubset> ProductSubsetAttributes { get; set; }
         public DbSet<ProductsSubCategorys> ProductsSubCategorys { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -49,6 +50,12 @@ namespace berozkala_backend.DbContextes
                 .HasMany(x => x.SubCategorys)
                 .WithOne(x => x.ProductCategory)
                 .HasForeignKey(x => x.ProductCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductAttribute>()
+                .HasMany(x => x.Subsets)
+                .WithOne(x => x.Attribute)
+                .HasForeignKey(x => x.AttributeId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

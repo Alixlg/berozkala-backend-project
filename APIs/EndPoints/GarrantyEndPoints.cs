@@ -15,7 +15,7 @@ namespace berozkala_backend.APIs.EndPoints
     {
         public static void MapAddGarrantysProduct(this WebApplication app)
         {
-            app.MapPost("api/v1/products/add-garrantys", async ([FromBody] GarrantyAddToProductDto dto,
+            app.MapPost("api/v1/products/add-garrantys", async ([FromBody] GeneticToProductDto<GarrantyDto> dto,
                 [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -27,10 +27,10 @@ namespace berozkala_backend.APIs.EndPoints
 
                     var product = await db.Products
                         .Include(x => x.Garrantys)
-                        .FirstOrDefaultAsync(P => P.Guid == dto.ProductId)
+                        .FirstOrDefaultAsync(P => P.Guid == dto.EntityId)
                             ?? throw new Exception("محصول مورد نظر یافت نشد");
 
-                    var garrantys = dto.Garrantys.Select(x => new ProductGarranty()
+                    var garrantys = dto.Items.Select(x => new ProductGarranty()
                     {
                         Product = product,
                         Name = x.Name,
@@ -61,7 +61,7 @@ namespace berozkala_backend.APIs.EndPoints
 
         public static void MapDeleteGarrantysProduct(this WebApplication app)
         {
-            app.MapDelete("api/v1/products/delete-garrantys", async ([FromBody] GarrantyDeleteToProductDto dto,
+            app.MapDelete("api/v1/products/delete-garrantys", async ([FromBody] GeneticToProductDto<Guid> dto,
                 [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
@@ -73,7 +73,7 @@ namespace berozkala_backend.APIs.EndPoints
 
                     var product = await db.Products
                         .Include(x => x.Garrantys)
-                        .FirstOrDefaultAsync(P => P.Guid == dto.ProductId)
+                        .FirstOrDefaultAsync(P => P.Guid == dto.EntityId)
                             ?? throw new Exception("محصول مورد نظر یافت نشد");
 
                     if (product.Garrantys == null || !product.Garrantys.Any())
@@ -82,7 +82,7 @@ namespace berozkala_backend.APIs.EndPoints
                     }
 
                     var garrantys = product.Garrantys
-                        .Where(x => dto.GarrantyIds.Contains(x.Guid))
+                        .Where(x => dto.Items.Contains(x.Guid))
                         .Select(x => x);
 
                     if (!garrantys.Any())
@@ -96,6 +96,55 @@ namespace berozkala_backend.APIs.EndPoints
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
                         Message = "گارانتی های مورد نظر با موفقیت حذف شد"
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = ex.Message
+                    };
+                }
+            }).RequireAuthorization();
+        }
+
+        public static void MapEditGarrantysProduct(this WebApplication app)
+        {
+            app.MapPut("api/v1/products/edit-garrantys", async ([FromBody] List<GarrantyEditDto> dto,
+                [FromServices] BerozkalaDb db, HttpContext context) =>
+            {
+                try
+                {
+                    var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                    var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid))
+                        ?? throw new Exception("شما ادمین نیستید");
+
+                    var garrantys = db.ProductGarrantys
+                        .Where(x => dto.Select(d => d.Id).Contains(x.Guid));
+
+                    if (!garrantys.Any())
+                        throw new Exception("گارانتی های مورد نظر وجود ندارند");
+
+                    dto.ForEach(d =>
+                    {
+                        var g = garrantys.FirstOrDefault(g => g.Guid == d.Id);
+                        if (g != null)
+                        {
+                            g.Name = d.Name;
+                            g.GarrantyCode = d.GarrantyCode;
+                        }
+                    });
+
+                    await db.SaveChangesAsync();
+
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "گارانتی های مورد نظر با موفقیت ویرایش شد"
                     };
                 }
                 catch (Exception ex)

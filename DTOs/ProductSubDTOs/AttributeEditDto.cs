@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace berozkala_backend.DTOs.ProductSubDTOs
 {
-    public class GarrantyAddToProductDto
+    public class AttributeEditDto
     {
-        public required Guid ProductId { get; set; }
-        public required List<GarrantyDto> Garrantys { get; set; }
+        public required Guid Id { get; set; }
+        public required string TitleName { get; set; }
     }
 }

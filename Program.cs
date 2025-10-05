@@ -57,35 +57,68 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+#region Product Apis
 app.MapProductList();
 app.MapProductCreate();
 app.MapProductEdit();
 app.MapProductPreviewList();
+#endregion
 
+
+#region Product Category Apis
 app.MapAddCategorysToProduct();
 app.MapRemoveCategorysProduct();
+#endregion
 
+
+#region Product Image Apis
 app.MapAddImagesProduct();
 app.MapDeleteImagesProduct();
+app.MapEditImagesProduct();
+#endregion
 
+
+#region Product Garranty Apis
 app.MapDeleteGarrantysProduct();
 app.MapAddGarrantysProduct();
+app.MapEditGarrantysProduct();
+#endregion
 
+
+#region Product Attribute Apis
+app.MapAddAttributesProduct();
+app.MapDeleteAttributesProduct();
+app.MapEditAttributesProduct();
+#endregion
+
+
+#region Product SubsetAttribute Apis
+app.MapAddSubsetAttributesProduct();
+app.MapEditSubsetAttributesProduct();
+app.MapDeleteSubsetAttributesProduct();
+#endregion
+
+
+#region Auth Apis
 app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();
 app.MapAuthMemberLoginWithCode();
 app.MapAuthMemberLoginSubmitCode();
-
 app.MapAuthAdminLogin();
+#endregion
 
+#region Category Apis
 app.MapCategoryCreate();
 app.MapGenericDelete<Category>("category");
 app.MapCategoryEdit();
 app.MapCategoryList();
+#endregion
 
+#region Sub Category Apis
 app.MapSubCategoryCreate();
 app.MapSubCategoryEdit();
 app.MapSubCategoryGet();
 app.MapGenericDelete<SubCategory>("subcategory");
+#endregion
 
 app.Run();
