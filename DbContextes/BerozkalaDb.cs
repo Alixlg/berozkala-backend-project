@@ -57,6 +57,36 @@ namespace berozkala_backend.DbContextes
                 .WithOne(x => x.Attribute)
                 .HasForeignKey(x => x.AttributeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(x => x.ImagesUrls)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(x => x.Attributes)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(x => x.Garrantys)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductsSubCategorys>()
+                .HasOne(ps => ps.Product)
+                .WithMany(p => p.ProductsSubCategorys)
+                .HasForeignKey(ps => ps.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProductsSubCategorys>()
+                .HasOne(ps => ps.SubCategory)
+                .WithMany(s => s.ProductsSubCategorys)
+                .HasForeignKey(ps => ps.SubCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

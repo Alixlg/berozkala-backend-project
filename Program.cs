@@ -62,6 +62,7 @@ app.MapProductList();
 app.MapProductCreate();
 app.MapProductEdit();
 app.MapProductPreviewList();
+app.MapGenericDeleteList<Product>("api/v1/products/delete");
 #endregion
 
 
@@ -109,7 +110,7 @@ app.MapAuthAdminLogin();
 
 #region Category Apis
 app.MapCategoryCreate();
-app.MapGenericDelete<Category>("category");
+app.MapGenericDeleteList<Category>("api/v1/categorys/delete");
 app.MapCategoryEdit();
 app.MapCategoryList();
 #endregion
@@ -118,7 +119,7 @@ app.MapCategoryList();
 app.MapSubCategoryCreate();
 app.MapSubCategoryEdit();
 app.MapSubCategoryGet();
-app.MapGenericDelete<SubCategory>("subcategory");
+app.MapGenericDeleteList<SubCategory>("api/v1/subcategorys/delete");
 #endregion
 
 app.Run();

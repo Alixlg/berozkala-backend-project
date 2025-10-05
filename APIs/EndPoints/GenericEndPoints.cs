@@ -8,9 +8,9 @@ namespace berozkala_backend.APIs.EndPoints
 {
     public static class GenericEndPoints
     {
-        public static void MapGenericDelete<T1>(this WebApplication app, string tabelName) where T1 : class, IGuid
+        public static void MapGenericDeleteList<T1>(this WebApplication app, string apiRoute) where T1 : class, IGuid
         {
-            app.MapDelete("api/v1/tabel/delete/{id:Guid}".Replace("tabel", tabelName), async ([FromRoute] Guid id, [FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapDelete(apiRoute, async ([FromBody] List<Guid> dto, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
                 {
@@ -19,17 +19,22 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(userGuid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    var entity = await db.Set<T1>().FirstOrDefaultAsync(x => x.Guid == id)
-                        ?? throw new Exception($"مورد نظر یافت نشد {tabelName}");
+                    var entitys = db.Set<T1>().Where(x => dto.Contains(x.Guid))
+                        .Select(x => x);
 
-                    db.Remove(entity);
+                    if (entitys == null || !entitys.Any())
+                    {
+                        throw new Exception("دیتا های مورد نظر وجود ندارند");
+                    }
+
+                    db.RemoveRange(entitys);
                     await db.SaveChangesAsync();
 
                     return new RequestResultDto<string>()
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
-                        Message = $"مورد نظر با موفقیت حذف شد {tabelName}"
+                        Message = $"دیتا های مورد نظر با موفقیت حذف شدند"
                     };
                 }
                 catch (Exception ex)
