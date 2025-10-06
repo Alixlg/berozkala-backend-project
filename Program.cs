@@ -100,6 +100,11 @@ app.MapDeleteSubsetAttributesProduct();
 #endregion
 
 
+#region Basket Apis
+app.MapAddProductToBasket();
+#endregion
+
+
 #region Auth Apis
 app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();
@@ -108,12 +113,14 @@ app.MapAuthMemberLoginSubmitCode();
 app.MapAuthAdminLogin();
 #endregion
 
+
 #region Category Apis
 app.MapCategoryCreate();
 app.MapGenericDeleteList<Category>("api/v1/categorys/delete");
 app.MapCategoryEdit();
 app.MapCategoryList();
 #endregion
+
 
 #region Sub Category Apis
 app.MapSubCategoryCreate();

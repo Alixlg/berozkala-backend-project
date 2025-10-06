@@ -10,6 +10,7 @@ namespace berozkala_backend.Entities.ProductEntities
         public int UserId { get; set; }
         public required UserAccount User { get; set; }
         public int ProductCount { get; set; }
+        public int? SelectedGarrantyId { get; set; }
         public ProductGarranty? SelectedGarranty { get; set; }
     }
 }

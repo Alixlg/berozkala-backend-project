@@ -21,7 +21,8 @@ namespace berozkala_backend.DbContextes
         public DbSet<ProductGarranty> ProductGarrantys { get; set; }
         public DbSet<ProductAttribute> ProductAttributes { get; set; }
         public DbSet<AttributeSubset> ProductSubsetAttributes { get; set; }
-        public DbSet<ProductsSubCategorys> ProductsSubCategorys { get; set; }
+        public DbSet<ProductSubCategory> ProductsSubCategorys { get; set; }
+        public DbSet<BasketProduct> BasketsProducts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -76,16 +77,28 @@ namespace berozkala_backend.DbContextes
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ProductsSubCategorys>()
+            modelBuilder.Entity<ProductSubCategory>()
                 .HasOne(ps => ps.Product)
                 .WithMany(p => p.ProductsSubCategorys)
                 .HasForeignKey(ps => ps.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ProductsSubCategorys>()
+            modelBuilder.Entity<ProductSubCategory>()
                 .HasOne(ps => ps.SubCategory)
                 .WithMany(s => s.ProductsSubCategorys)
                 .HasForeignKey(ps => ps.SubCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BasketProduct>()
+                .HasOne(ps => ps.Product)
+                .WithMany(p => p.BasketsProducts)
+                .HasForeignKey(ps => ps.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BasketProduct>()
+                .HasOne(ps => ps.User)
+                .WithMany(s => s.BasketsProducts)
+                .HasForeignKey(ps => ps.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

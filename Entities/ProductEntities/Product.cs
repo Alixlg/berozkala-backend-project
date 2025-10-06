@@ -9,7 +9,7 @@ namespace berozkala_backend.Entities.ProductEntities
         public required bool IsAvailable { get; set; }
         public required string Brand { get; set; }
         public required string Title { get; set; }
-        public List<ProductsSubCategorys>? ProductsSubCategorys { get; set; }
+        public List<ProductSubCategory>? ProductsSubCategorys { get; set; }
         public required decimal Price { get; set; }
         public required int MaxCount { get; set; }
         public Score ScoreRank { get; set; }
@@ -20,5 +20,6 @@ namespace berozkala_backend.Entities.ProductEntities
         public string? Review { get; set; }
         public List<ProductGarranty>? Garrantys { get; set; }
         public List<ProductAttribute>? Attributes { get; set; }
+        public List<BasketProduct>? BasketsProducts { get; set; }
     }
 }
