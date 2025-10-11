@@ -129,4 +129,9 @@ app.MapSubCategoryGet();
 app.MapGenericDeleteList<SubCategory>("api/v1/subcategorys/delete");
 #endregion
 
+
+#region Sub Category Apis
+app.MapAuthValidToken();
+#endregion
+
 app.Run();

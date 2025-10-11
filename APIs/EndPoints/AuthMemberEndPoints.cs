@@ -48,7 +48,7 @@ namespace berozkala_backend.APIs.EndPoints
                     DateOfSingup = DateTime.Now
                 };
 
-                var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
+                var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(300));
 
                 user.Status = AccountStatus.Active;
 
@@ -103,7 +103,7 @@ namespace berozkala_backend.APIs.EndPoints
                     };
                 }
 
-                var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
+                var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(300));
 
                 return new RequestResultDto<string>()
                 {
@@ -206,7 +206,7 @@ namespace berozkala_backend.APIs.EndPoints
                 {
                     if (user.OptCode == dto.OptCode)
                     {
-                        var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(30));
+                        var token = JwtTools.GenerateJwtToken(user.UserName, user.Guid.ToString(), context.Request.Headers.UserAgent, DateTime.Now.AddMinutes(300));
 
                         return new RequestResultDto<string>()
                         {
