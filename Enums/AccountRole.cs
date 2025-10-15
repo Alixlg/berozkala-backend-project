@@ -2,8 +2,8 @@ namespace berozkala_backend.Enums
 {
     public enum AccountRole
     {
-        None,
-        User,
-        Admin
+        None = 0,
+        User = 1,
+        Admin = 2
     }
 }
