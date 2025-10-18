@@ -11,6 +11,7 @@ namespace berozkala_backend.DbContextes
         public DbSet<Product> Products { get; set; }
         public DbSet<AdminAccount> Admins { get; set; }
         public DbSet<UserAccount> Users { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
         public DbSet<PeymentMethod> PeymentMethods { get; set; }
         public DbSet<Order> Orders { get; set; }

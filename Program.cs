@@ -135,4 +135,15 @@ app.MapGenericDeleteList<SubCategory>("api/v1/subcategorys/delete");
 app.MapAuthValidToken();
 #endregion
 
+
+#region Profile Apis
+app.MapUserEditProfile();
+#endregion
+
+#region Address Apis
+app.MapAddressEditList();
+app.MapAddressAddList();
+app.MapAddressDelete();
+#endregion
+
 app.Run();

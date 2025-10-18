@@ -8,7 +8,7 @@ namespace berozkala_backend.APIs.EndPoints
 {
     public static class GenericEndPoints
     {
-        public static void MapGenericDeleteList<T1>(this WebApplication app, string apiRoute) where T1 : class, IGuid
+        public static void MapGenericDeleteList<TEntity>(this WebApplication app, string apiRoute) where TEntity : class, IGuid
         {
             app.MapDelete(apiRoute, async ([FromBody] List<Guid> dto, [FromServices] BerozkalaDb db, HttpContext context) =>
             {
@@ -19,7 +19,7 @@ namespace berozkala_backend.APIs.EndPoints
                     var admin = await db.Admins.FirstOrDefaultAsync(a => a.Guid == Guid.Parse(userGuid))
                         ?? throw new Exception("شما ادمین نیستید");
 
-                    var entitys = db.Set<T1>().Where(x => dto.Contains(x.Guid))
+                    var entitys = db.Set<TEntity>().Where(x => dto.Contains(x.Guid))
                         .Select(x => x);
 
                     if (entitys == null || !entitys.Any())
