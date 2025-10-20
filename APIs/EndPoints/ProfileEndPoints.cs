@@ -13,9 +13,9 @@ namespace berozkala_backend.APIs.EndPoints
 {
     public static class ProfileEndPoints
     {
-        public static void MapAuthUserGetInfo(this WebApplication app)
+        public static void MapUserGetInfo(this WebApplication app)
         {
-            app.MapGet("api/v1/auth/member/get-info", async ([FromServices] BerozkalaDb db, HttpContext context) =>
+            app.MapGet("api/v1/user/get-info", async ([FromServices] BerozkalaDb db, HttpContext context) =>
             {
                 try
                 {
@@ -103,6 +103,7 @@ namespace berozkala_backend.APIs.EndPoints
                 }
             }).RequireAuthorization();
         }
+
         public static void MapUserEditProfile(this WebApplication app)
         {
             app.MapPut("api/v1/user/edit-profile", async ([FromServices] BerozkalaDb db, [FromBody] ProfileEditDto dto, HttpContext context) =>
@@ -143,7 +144,6 @@ namespace berozkala_backend.APIs.EndPoints
 
                         await db.SaveChangesAsync();
                     }
-
                     else
                     {
                         throw new Exception("کاربر مورد نظر وجود ندارد");
@@ -154,6 +154,70 @@ namespace berozkala_backend.APIs.EndPoints
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
                         Message = "شما با موفیقت پروفایل خود را ویرایش کردید",
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = false,
+                        StatusCode = context.Response.StatusCode,
+                        Message = ex.Message
+                    };
+                }
+            }).RequireAuthorization();
+        }
+
+        public static void MapUserChangePassword(this WebApplication app)
+        {
+            app.MapPut("api/v1/user/change-password", async ([FromServices] BerozkalaDb db, [FromBody] ChangePasswordDto dto, HttpContext context) =>
+            {
+                try
+                {
+                    var guid = context.User.Claims.FirstOrDefault(x => x.Type == "guid")?.Value ?? "";
+
+                    var admin = await db.Admins
+                        .Where(x => x.Status == AccountStatus.Active)
+                        .FirstOrDefaultAsync(a => a.Guid == Guid.Parse(guid));
+
+                    var user = await db.Users
+                        .Where(x => x.Status == AccountStatus.Active)
+                        .FirstOrDefaultAsync(u => u.Guid == Guid.Parse(guid));
+
+                    if (admin != null)
+                    {
+                        if (admin.PassWord == dto.CurrentPassword)
+                        {
+                            admin.PassWord = dto.NewPassword;
+                            await db.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            throw new Exception("رمز عبور فعلی شما اشتباه میباشد");
+                        }
+                    }
+                    else if (user != null)
+                    {
+                        if (user.PassWord == dto.CurrentPassword)
+                        {
+                            user.PassWord = dto.NewPassword;
+                            await db.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            throw new Exception("رمز عبور فعلی شما اشتباه میباشد");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("کاربر مورد نظر وجود ندارد");
+                    }
+
+                    return new RequestResultDto<string>()
+                    {
+                        IsSuccess = true,
+                        StatusCode = context.Response.StatusCode,
+                        Message = "شما با موفیقت رمز عبور خود را تغییر دادید",
                     };
                 }
                 catch (Exception ex)

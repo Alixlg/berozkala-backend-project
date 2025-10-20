@@ -110,7 +110,6 @@ app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();
 app.MapAuthMemberLoginWithCode();
 app.MapAuthMemberLoginSubmitCode();
-app.MapAuthUserGetInfo();
 app.MapAuthAdminLogin();
 #endregion
 
@@ -138,6 +137,8 @@ app.MapAuthValidToken();
 
 #region Profile Apis
 app.MapUserEditProfile();
+app.MapUserChangePassword();
+app.MapUserGetInfo();
 #endregion
 
 #region Address Apis
