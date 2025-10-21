@@ -111,6 +111,7 @@ app.MapAuthMemberLoginWithUserName();
 app.MapAuthMemberLoginWithCode();
 app.MapAuthMemberLoginSubmitCode();
 app.MapAuthAdminLogin();
+app.MapAuthValidToken();
 #endregion
 
 
@@ -127,11 +128,6 @@ app.MapSubCategoryCreate();
 app.MapSubCategoryEdit();
 app.MapSubCategoryGet();
 app.MapGenericDeleteList<SubCategory>("api/v1/subcategorys/delete");
-#endregion
-
-
-#region Sub Category Apis
-app.MapAuthValidToken();
 #endregion
 
 

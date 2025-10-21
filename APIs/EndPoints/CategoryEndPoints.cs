@@ -109,6 +109,7 @@ namespace berozkala_backend.APIs.EndPoints
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
+                        Message = "عملیات موفقیت آمیز بود",
                         Body = categorys
                     };
                 }
