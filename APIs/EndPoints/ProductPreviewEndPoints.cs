@@ -78,7 +78,7 @@ namespace berozkala_backend.APIs.EndPoints
                     {
                         IsSuccess = true,
                         StatusCode = context.Response.StatusCode,
-                        Message = "لیست محصولات با موفقبت یافت شد",
+                        Message = "لیست محصولات با موفقیت یافت شد",
                         Body = prdoucts
                     };
                 }
