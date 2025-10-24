@@ -91,7 +91,7 @@ namespace berozkala_backend.APIs.EndPoints
                         Message = ex.Message
                     };
                 }
-            }).RequireAuthorization();
+            });
         }
     }
 }

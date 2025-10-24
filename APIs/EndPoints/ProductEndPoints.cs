@@ -212,7 +212,7 @@ namespace berozkala_backend.APIs.EndPoints
                         Message = ex.Message
                     };
                 }
-            }).RequireAuthorization();
+            });
         }
 
         public static void MapProductEdit(this WebApplication app)
