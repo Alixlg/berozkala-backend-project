@@ -99,12 +99,6 @@ app.MapEditSubsetAttributesProduct();
 app.MapDeleteSubsetAttributesProduct();
 #endregion
 
-
-#region Basket Apis
-app.MapAddProductToBasket();
-#endregion
-
-
 #region Auth Apis
 app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();
@@ -141,6 +135,13 @@ app.MapUserGetInfo();
 app.MapAddressEditList();
 app.MapAddressAddList();
 app.MapAddressDelete();
+#endregion
+
+#region Basket Apis
+app.MapAddProductToBasket();
+app.MapRemoveProductFromBasket();
+app.MapClearProductFromBasket();
+app.MapGetBasketProducts();
 #endregion
 
 app.Run();
