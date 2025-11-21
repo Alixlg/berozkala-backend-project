@@ -40,11 +40,11 @@ app.UseCors(policy =>
     policy.AllowAnyOrigin();
 });
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BerozkalaDb>();
-    await db.Database.MigrateAsync();
-}
+await using var scope = app.Services.CreateAsyncScope();
+
+var db = scope.ServiceProvider.GetRequiredService<BerozkalaDb>();
+await db.Database.MigrateAsync();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -99,6 +99,7 @@ app.MapEditSubsetAttributesProduct();
 app.MapDeleteSubsetAttributesProduct();
 #endregion
 
+
 #region Auth Apis
 app.MapAuthMemberSingUp();
 app.MapAuthMemberLoginWithUserName();
@@ -131,11 +132,13 @@ app.MapUserChangePassword();
 app.MapUserGetInfo();
 #endregion
 
+
 #region Address Apis
 app.MapAddressEditList();
 app.MapAddressAddList();
 app.MapAddressDelete();
 #endregion
+
 
 #region Basket Apis
 app.MapAddProductToBasket();
