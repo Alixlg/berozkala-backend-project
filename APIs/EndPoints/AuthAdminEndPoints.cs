@@ -1,6 +1,7 @@
 ﻿using berozkala_backend.DbContextes;
 using berozkala_backend.DTOs.CommonDTOs;
 using berozkala_backend.DTOs.MemberDTOs;
+using berozkala_backend.Entities.AccountsEntities;
 using berozkala_backend.Enums;
 using berozkala_backend.Tools;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,21 @@ namespace berozkala_backend.APIs.EndPoints
                         StatusCode = context.Response.StatusCode,
                         Message = "یوزر نیم یا پسورد خالی است"
                     };
+                }
+
+                if ((!await db.Admins.AnyAsync()))
+                {
+                    await db.Admins.AddAsync(new AdminAccount()
+                    {
+                        UserName = "admin",
+                        PassWord = "admin",
+                        Status = AccountStatus.Active,
+                        DateOfSingup = DateTime.Now,
+                        PhoneNumber = "00000000000",
+                        LastIp = context.Connection.RemoteIpAddress?.ToString() ?? "",
+                        AccountRole = AccountRole.Admin
+                    });
+                    await db.SaveChangesAsync();
                 }
 
                 var admin = await db.Admins.Where(x => x.Status == AccountStatus.Active)

@@ -30,6 +30,8 @@ namespace berozkala_backend.DbContextes
             optionsBuilder.UseSqlite(@"Data source=DbFiles\BerozkalaDb.sqlite");
         }
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserAccount>(u =>
