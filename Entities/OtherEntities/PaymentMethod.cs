@@ -6,7 +6,7 @@ using berozkala_backend.Entities.CommonEntities;
 
 namespace berozkala_backend.Entities.OtherEntities
 {
-    public class PeymentMethod : DbBaseProps
+    public class PaymentMethod : DbBaseProps
     {
         public required string MethodName { get; set; }
         public required string MethodDescription { get; set; }

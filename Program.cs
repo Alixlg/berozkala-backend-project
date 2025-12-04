@@ -41,10 +41,8 @@ app.UseCors(policy =>
 });
 
 await using var scope = app.Services.CreateAsyncScope();
-
 var db = scope.ServiceProvider.GetRequiredService<BerozkalaDb>();
 await db.Database.MigrateAsync();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -145,6 +143,27 @@ app.MapAddProductToBasket();
 app.MapRemoveProductFromBasket();
 app.MapClearProductFromBasket();
 app.MapGetBasketProducts();
+#endregion
+
+
+#region ShipingMethod Apis
+app.MapShippingMethodCreate();
+app.MapShippingMethodDelete();
+app.MapShippingMethodEdit();
+app.MapShippingMethodList();
+app.MapShippingMethodGet();
+#endregion
+
+#region PaymentMethod Apis
+app.MapPaymentMethodCreate();
+app.MapPaymentMethodEdit();
+app.MapPaymentMethodDelete();
+app.MapPaymentMethodList();
+app.MapPaymentMethodGet();
+#endregion
+
+#region Order Apis
+app.MapCreateOrder();
 #endregion
 
 app.Run();

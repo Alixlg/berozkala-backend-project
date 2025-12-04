@@ -58,7 +58,7 @@ namespace berozkala_backend.APIs.EndPoints
                             .Where(x => dto.SubCategoryIds.Contains(x.Guid))
                             .Select(s => s);
 
-                        var productsSubCategorys = subCategorys.Select(x => new ProductSubCategory()
+                        var productsSubCategorys = subCategorys.Select(x => new ProductsSubCategorys()
                         {
                             Product = product,
                             SubCategory = x
@@ -282,7 +282,7 @@ namespace berozkala_backend.APIs.EndPoints
                         .Select(s => s.Id);
 
                     var productsSubCategorys = subCategorys
-                        .Select(x => new ProductSubCategory()
+                        .Select(x => new ProductsSubCategorys()
                         {
                             Product = product,
                             SubCategoryId = x

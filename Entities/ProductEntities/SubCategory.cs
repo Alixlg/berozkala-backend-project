@@ -7,6 +7,6 @@ namespace berozkala_backend.Entities.ProductEntities
         public required string SubCategoryName { get; set; }
         public int ProductCategoryId { get; set; }
         public required Category ProductCategory { get; set; }
-        public List<ProductSubCategory>? ProductsSubCategorys { get; set; }
+        public List<ProductsSubCategorys>? ProductsSubCategorys { get; set; }
     }
 }

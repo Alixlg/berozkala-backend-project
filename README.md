@@ -3,11 +3,11 @@ This program is webapi-based and written in C# (.NET). program is the backend of
 
 ## Program
 
-This project was generated using [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) version 9.0
+This project was generated using [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) version 10.0
 
 ## Prerequisites
 
-- Install Dotnet Runtime or SDK version 9 or upper
+- Install Dotnet Runtime or SDK version 10 or upper
 - Install EF-Core
 ```bash
 dotnet tool install --global dotnet-ef

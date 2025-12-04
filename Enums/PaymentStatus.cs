@@ -1,6 +1,6 @@
 namespace berozkala_backend.Enums
 {
-    public enum PeymentStatus
+    public enum PaymentStatus
     {
         Pending = 0,        // در انتظار پرداخت
         Paid = 1,           // پرداخت شده

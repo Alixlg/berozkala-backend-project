@@ -2,11 +2,12 @@ namespace berozkala_backend.Enums
 {
     public enum OrderStatus
     {
-        PendingConfirmation = 0,     // در انتظار
-        Processing = 1,  // در حال پردازش
-        Shipped = 2,     // ارسال شده
-        Completed = 3,   // انجام شده
-        Cancelled = 4,   // لغو شده
-        Returned = 5     // مرجوعی
+        PendingToPay,  // در انتظار پرداخت
+        PendingConfirmation,     // در انتظار
+        Processing,  // در حال پردازش
+        Shipped,     // ارسال شده
+        Completed,   // انجام شده
+        Cancelled,   // لغو شده
+        Returned   // مرجوعی
     }
 }

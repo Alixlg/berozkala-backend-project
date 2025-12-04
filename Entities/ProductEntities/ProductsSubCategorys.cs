@@ -2,7 +2,7 @@ using berozkala_backend.Entities.CommonEntities;
 
 namespace berozkala_backend.Entities.ProductEntities
 {
-    public class ProductSubCategory : DbBaseProps
+    public class ProductsSubCategorys : DbBaseProps
     {
         public int ProductId { get; set; }
         public required Product Product { get; set; }
