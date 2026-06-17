@@ -18,8 +18,4 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.11.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DbFiles\" />
-  </ItemGroup>
-
 </Project>
