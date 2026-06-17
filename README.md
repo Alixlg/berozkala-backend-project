@@ -8,25 +8,19 @@ This project was generated using [.NET SDK](https://dotnet.microsoft.com/en-us/d
 ## Prerequisites
 
 - Install Dotnet Runtime or SDK version 10 or upper
-- Install EF-Core
-```bash
-dotnet tool install --global dotnet-ef
-```
+- Dotnet Restore
 ```bash
 dotnet restore
 ```
+
 ## How To Run
 
-- 1> Create folder with `DbFiles` name in root directory
-
-- 2> Enter in Terminal :
-```bash
-dotnet ef database update
-```
+- 1> Enter in Terminal :
 ```bash
 dotnet build
 ```
-- 3> Run again and enjoy :)
+
+- 2> Run again and enjoy :)
 
 ## Admin Panel Information
 

@@ -278,6 +278,10 @@ ServiceFabricBackup/
 *.ldf
 *.ndf
 
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout

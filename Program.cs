@@ -11,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddCors();
-builder.Services.AddDbContext<BerozkalaDb>();
+builder.Services.AddDbContext<BerozkalaDb>(optionsBuilder =>
+{
+    optionsBuilder.UseSqlite(@"Data source=./BerozkalaDb.sqlite");
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(options =>
@@ -40,9 +43,11 @@ app.UseCors(policy =>
     policy.AllowAnyOrigin();
 });
 
-await using var scope = app.Services.CreateAsyncScope();
-var db = scope.ServiceProvider.GetRequiredService<BerozkalaDb>();
-await db.Database.MigrateAsync();
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<BerozkalaDb>();
+    await db.Database.MigrateAsync();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

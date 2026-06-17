@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace berozkala_backend.DbContextes
 {
-    public class BerozkalaDb : DbContext
+    public class BerozkalaDb(DbContextOptions options) : DbContext(options)
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<AdminAccount> Admins { get; set; }
@@ -25,13 +25,6 @@ namespace berozkala_backend.DbContextes
         public DbSet<AttributeSubset> ProductSubsetAttributes { get; set; }
         public DbSet<ProductsSubCategorys> ProductsSubCategorys { get; set; }
         public DbSet<BasketProduct> BasketsProducts { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite(@"Data source=DbFiles\BerozkalaDb.sqlite");
-        }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
